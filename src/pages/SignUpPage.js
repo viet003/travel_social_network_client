@@ -1,4 +1,5 @@
 import React from 'react';
+import { MdOutlineExplore } from "react-icons/md";
 
 const SignUpPage = () => {
   return (
@@ -18,7 +19,7 @@ const SignUpPage = () => {
         <div className="flex flex-col justify-center p-8 md:w-1/2">
           <div className="flex flex-col items-start mb-8">
             <span className="flex items-center mb-2 text-xl font-bold text-blue-600">
-              <svg className="mr-2 text-blue-500 w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="white" /><path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <MdOutlineExplore className="text-blue-600 w-7 h-7"   />
               TravelNest
             </span>
             <h2 className="text-3xl font-bold text-gray-800">Create your account</h2>
