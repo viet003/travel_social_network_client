@@ -1,23 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from "react-router-dom";
+import { Login, Main } from "./pages";
+import { pathDomain } from "./utilities/pathDomain";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Routes>
+        <Route path={pathDomain.LOGIN} element={<Login />} />
+        {/* <Route exact path={pathDomain.} element={<SignUp />} /> */}
+        <Route path={pathDomain.MAIN} element={<Main /> }>
+         
+        </Route>
+        {/* <Route path={pathDomain.FORGOTPASS} element={<ForgotPass />} /> */}
+        <Route path={pathDomain.STAR} element={<Main />} />
+      </Routes>
     </div>
   );
 }
