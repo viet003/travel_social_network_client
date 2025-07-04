@@ -1,5 +1,5 @@
 export const pathDomain = {
-    MAIN : "/",
+    HOME : "/",
     LOGIN : "/login",
     FORGOTPASS: "/forgot-pass",
     LANDING: "/landing",

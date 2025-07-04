@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { LoginPage, MainPage, LandingPage, SignUpPage } from "./pages";
+import { LoginPage, HomePage, LandingPage, SignUpPage } from "./pages";
 import { pathDomain } from "./utilities/pathDomain";
 
 function App() {
@@ -9,11 +9,11 @@ function App() {
         <Route path={pathDomain.LOGIN} element={<LoginPage />} />
         <Route path={pathDomain.LANDING} element={<LandingPage />} />
         <Route path={pathDomain.SIGNUP} element={<SignUpPage />} />
-        <Route path={pathDomain.MAIN} element={<MainPage /> }>
+        <Route path={pathDomain.HOME} element={<HomePage /> }>
          
         </Route>
         {/* <Route path={pathDomain.FORGOTPASS} element={<ForgotPass />} /> */}
-        <Route path={pathDomain.STAR} element={<MainPage />} />
+        <Route path={pathDomain.STAR} element={<HomePage />} />
       </Routes>
     </div>
   );
