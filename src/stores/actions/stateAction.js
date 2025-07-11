@@ -1,6 +1,6 @@
-import actionTypes from "./actionTypes";
+import actionTypes from "../types/actionTypes";
 
-export const state = (payload) => async (dispatch) => {
+export const stateAction = (payload) => async (dispatch) => {
     dispatch({
         type: actionTypes.STATE,
         data: payload

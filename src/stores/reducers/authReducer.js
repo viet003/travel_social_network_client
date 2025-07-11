@@ -1,4 +1,4 @@
-import actionTypes from "../actions/actionTypes";
+import actionTypes from "../types/actionTypes";
 
 const initState = {
     isLoggedIn: false,
@@ -29,6 +29,13 @@ const authReducer = (state = initState, action) => {
                 isLoggedIn: false,
                 token: null,
                 msg: '',
+            })
+        case actionTypes.CHECK_AUTH_STATUS:
+            return ({
+                ...state,
+                isLoggedIn: !!action?.data?.token,
+                token: action?.data?.token || null,
+                msg: action?.data?.msg || '',
             })
         default:
             return state;

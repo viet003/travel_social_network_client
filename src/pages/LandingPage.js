@@ -1,5 +1,8 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
+import { pathDomain } from '../utilities/pathDomain';
+import { MdOutlineExplore } from 'react-icons/md';
+  
 const LandingPage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -7,7 +10,10 @@ const LandingPage = () => {
       <header className="w-full bg-white shadow-sm">
         <div className="flex items-center justify-between px-6 py-4 mx-auto max-w-7xl">
           <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-blue-500">TravelNest</span>
+            <span className="flex items-center text-xl font-bold text-blue-500">
+              <MdOutlineExplore className="text-blue-600 w-7 h-7"   />
+              TravelNest
+              </span>
           </div>
           <nav className="hidden space-x-8 font-medium text-gray-700 md:flex">
             <a href="#" className="hover:text-blue-500">Discover</a>
@@ -16,8 +22,8 @@ const LandingPage = () => {
             <a href="#" className="hover:text-blue-500">About</a>
           </nav>
           <div className="flex space-x-2">
-            <button className="px-4 py-1 text-gray-700 rounded hover:bg-gray-100">Log In</button>
-            <button className="px-4 py-1 text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</button>
+            <Link to={pathDomain.LOGIN} className="px-4 py-1 text-gray-700 rounded hover:bg-gray-100">Log In</Link>
+            <Link to={pathDomain.SIGNUP} className="px-4 py-1 text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</Link>
           </div>
         </div>
       </header>
@@ -33,8 +39,8 @@ const LandingPage = () => {
           <h1 className="mb-4 text-4xl font-extrabold md:text-5xl">Explore the World Together</h1>
           <p className="mb-6 text-lg font-medium md:text-xl">Connect with fellow travelers, share your adventures, and create unforgettable memories together</p>
           <div className="flex justify-center space-x-4">
-            <button className="px-6 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</button>
-            <button className="px-6 py-2 font-semibold text-blue-500 bg-white rounded hover:bg-gray-100">Log In</button>
+            <Link to={pathDomain.SIGNUP} className="px-6 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</Link>
+            <Link to={pathDomain.LOGIN} className="px-6 py-2 font-semibold text-blue-500 bg-white rounded hover:bg-gray-100">Log In</Link>
           </div>
         </div>
       </section>
@@ -78,7 +84,10 @@ const LandingPage = () => {
       <footer className="mt-auto bg-white border-t">
         <div className="grid grid-cols-1 gap-8 px-4 py-10 mx-auto text-gray-700 max-w-7xl md:grid-cols-4">
           <div>
-            <span className="text-lg font-bold text-blue-500">TravelNest</span>
+            <span className="flex items-center text-lg font-bold text-blue-500">
+              <MdOutlineExplore className="text-blue-600 w-7 h-7"   />
+              TravelNest
+              </span>
             <p className="mt-2 text-sm">Your global travel community</p>
             <div className="flex mt-4 space-x-3">
               {/* Social icons */}

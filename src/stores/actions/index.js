@@ -1,2 +1,2 @@
-export * from "./auth"
-export * from "./state"
+export * as authAction from "./authAction"
+export * as stateAction from "./stateAction"
