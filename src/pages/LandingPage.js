@@ -1,19 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { pathDomain } from '../utilities/pathDomain';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { MdOutlineExplore } from 'react-icons/md';
+import Modal from '../components/Modal';
+import { LoginForm, SignUpForm } from "../components/model";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
   
 const LandingPage = () => {
+  const navigate = useNavigate();
+  const [openLogin, setOpenLogin] = useState(false);
+  const [openSignUp, setOpenSignUp] = useState(false);
+  // Đóng modal
+  const handleCloseModal = () => {
+    setOpenLogin(false);
+    setOpenSignUp(false);
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Header */}
       <header className="w-full bg-white shadow-sm">
         <div className="flex items-center justify-between px-6 py-4 mx-auto max-w-7xl">
           <div className="flex items-center space-x-2">
-            <span className="flex items-center text-xl font-bold text-blue-500">
+            <a href='#' className="flex items-center text-xl font-bold text-blue-500">
               <MdOutlineExplore className="text-blue-600 w-7 h-7"   />
               TravelNest
-              </span>
+              </a>
           </div>
           <nav className="hidden space-x-8 font-medium text-gray-700 md:flex">
             <a href="#" className="hover:text-blue-500">Discover</a>
@@ -22,8 +34,8 @@ const LandingPage = () => {
             <a href="#" className="hover:text-blue-500">About</a>
           </nav>
           <div className="flex space-x-2">
-            <Link to={pathDomain.LOGIN} className="px-4 py-1 text-gray-700 rounded hover:bg-gray-100">Log In</Link>
-            <Link to={pathDomain.SIGNUP} className="px-4 py-1 text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</Link>
+            <button onClick={() => setOpenLogin(true)} className="px-4 py-1 text-gray-700 rounded hover:bg-gray-100">Log In</button>
+            <button onClick={() => setOpenSignUp(true)} className="px-4 py-1 text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</button>
           </div>
         </div>
       </header>
@@ -39,8 +51,8 @@ const LandingPage = () => {
           <h1 className="mb-4 text-4xl font-extrabold md:text-5xl">Explore the World Together</h1>
           <p className="mb-6 text-lg font-medium md:text-xl">Connect with fellow travelers, share your adventures, and create unforgettable memories together</p>
           <div className="flex justify-center space-x-4">
-            <Link to={pathDomain.SIGNUP} className="px-6 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</Link>
-            <Link to={pathDomain.LOGIN} className="px-6 py-2 font-semibold text-blue-500 bg-white rounded hover:bg-gray-100">Log In</Link>
+            <button onClick={() => setOpenSignUp(true)} className="px-6 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</button>
+            <button onClick={() => setOpenLogin(true)} className="px-6 py-2 font-semibold text-blue-500 bg-white rounded hover:bg-gray-100">Log In</button>
           </div>
         </div>
       </section>
@@ -126,13 +138,21 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="flex flex-col items-center justify-between px-4 py-4 mx-auto text-xs text-gray-400 border-t md:flex-row max-w-7xl">
-          <span>© 2024 Wanderlust. All rights reserved.</span>
+          <span>© 2025 TravelNest. All rights reserved.</span>
           <span className="flex items-center mt-2 space-x-1 md:mt-0">
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.95 7.05l-.71-.71M4.05 4.05l-.71-.71" /></svg>
             <span>English (US)</span>
           </span>
         </div>
       </footer>
+      {/* Modal hiển thị login/signup */}
+      <Modal open={openLogin} onClose={handleCloseModal}>
+        <LoginForm />
+      </Modal>
+      <Modal open={openSignUp} onClose={handleCloseModal}>
+        <SignUpForm />
+      </Modal>
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };

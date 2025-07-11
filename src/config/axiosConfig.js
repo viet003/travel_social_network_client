@@ -1,10 +1,13 @@
 import axios from "axios";
 import reduxStoreConfig from "./reduxConfig"; // Import hàm reduxStoreConfig để lấy store
-import { logout } from "../stores/actions"; // Import action logout
+import { authAction } from "../stores/actions"; // Import action logout
 
 // Tạo instance của axios với baseURL
 const instance = axios.create({
   baseURL: process.env.REACT_APP_SERVER_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 // Lấy store từ reduxStoreConfig
@@ -30,9 +33,14 @@ instance.interceptors.response.use(
   },
   function (error) {
     if (error.response && error.response.status === 401) {
-      // Thực hiện logout khi nhận được lỗi 401 (Unauthorized)
-      store.dispatch(logout());
+      store.dispatch(authAction.logout());
     }
+
+    if (error.response) {
+      // Nếu có response từ server (kể cả lỗi), trả về response đó
+      return Promise.resolve(error.response);
+    }
+    
     return Promise.reject(error);
   }
 );
