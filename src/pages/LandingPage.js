@@ -10,10 +10,38 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [openLogin, setOpenLogin] = useState(false);
   const [openSignUp, setOpenSignUp] = useState(false);
+  const [modalType, setModalType] = useState(''); // Thêm state để đánh dấu loại modal
+
   // Đóng modal
   const handleCloseModal = () => {
     setOpenLogin(false);
     setOpenSignUp(false);
+    setModalType('');
+  };
+
+  // Mở modal login
+  const handleOpenLogin = () => {
+    setOpenLogin(true);
+    setModalType('login');
+  };
+
+  // Mở modal signup
+  const handleOpenSignUp = () => {
+    setOpenSignUp(true);
+    setModalType('signup');
+  };
+
+  // Chuyển đổi giữa login và signup
+  const switchToSignUp = () => {
+    setOpenLogin(false);
+    setOpenSignUp(true);
+    setModalType('signup');
+  };
+
+  const switchToLogin = () => {
+    setOpenSignUp(false);
+    setOpenLogin(true);
+    setModalType('login');
   };
 
   return (
@@ -34,8 +62,8 @@ const LandingPage = () => {
             <a href="#" className="hover:text-blue-500">About</a>
           </nav>
           <div className="flex space-x-2">
-            <button onClick={() => setOpenLogin(true)} className="px-4 py-1 text-gray-700 rounded hover:bg-gray-100">Log In</button>
-            <button onClick={() => setOpenSignUp(true)} className="px-4 py-1 text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</button>
+            <button onClick={handleOpenLogin} className="px-4 py-1 text-gray-700 rounded hover:bg-gray-100">Log In</button>
+            <button onClick={handleOpenSignUp} className="px-4 py-1 text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</button>
           </div>
         </div>
       </header>
@@ -51,8 +79,8 @@ const LandingPage = () => {
           <h1 className="mb-4 text-4xl font-extrabold md:text-5xl">Explore the World Together</h1>
           <p className="mb-6 text-lg font-medium md:text-xl">Connect with fellow travelers, share your adventures, and create unforgettable memories together</p>
           <div className="flex justify-center space-x-4">
-            <button onClick={() => setOpenSignUp(true)} className="px-6 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</button>
-            <button onClick={() => setOpenLogin(true)} className="px-6 py-2 font-semibold text-blue-500 bg-white rounded hover:bg-gray-100">Log In</button>
+            <button onClick={handleOpenSignUp} className="px-6 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">Sign Up</button>
+            <button onClick={handleOpenLogin} className="px-6 py-2 font-semibold text-blue-500 bg-white rounded hover:bg-gray-100">Log In</button>
           </div>
         </div>
       </section>
@@ -147,10 +175,10 @@ const LandingPage = () => {
       </footer>
       {/* Modal hiển thị login/signup */}
       <Modal open={openLogin} onClose={handleCloseModal}>
-        <LoginForm />
+        <LoginForm modalType={modalType} onSwitchToSignUp={switchToSignUp} />
       </Modal>
       <Modal open={openSignUp} onClose={handleCloseModal}>
-        <SignUpForm />
+        <SignUpForm modalType={modalType} onSwitchToLogin={switchToLogin} />
       </Modal>
       <ToastContainer position="top-right" autoClose={2000} />
     </div>

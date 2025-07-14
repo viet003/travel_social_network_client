@@ -7,13 +7,14 @@
         font-family: 'Poppins', sans-serif;
     }
 
-    ::-webkit-scrollbar {
-        @apply w-2
+    /* Global scrollbar - chỉ áp dụng cho elements không có class scrollbar-hide */
+    :not(.scrollbar-hide)::-webkit-scrollbar {
+        @apply w-1 h-6
     }
 
-    ::-webkit-scrollbar-track {}
+    :not(.scrollbar-hide)::-webkit-scrollbar-track {}
 
-    ::-webkit-scrollbar-thumb {
+    :not(.scrollbar-hide)::-webkit-scrollbar-thumb {
         @apply rounded-full bg-gray-300  h-4
     }
 
@@ -21,3 +22,39 @@
         @apply text-black bg-white
     }
 }
+
+/* Custom scrollbar styles */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Khi hover, hiển thị scrollbar */
+.scrollbar-hide:hover {
+  -ms-overflow-style: auto;
+  scrollbar-width: auto;
+}
+
+.scrollbar-hide:hover::-webkit-scrollbar {
+  display: block;
+  width: 4px;
+  height: 6px;
+}
+
+.scrollbar-hide:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-hide:hover::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.scrollbar-hide:hover::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
