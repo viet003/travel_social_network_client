@@ -1,8 +1,10 @@
 import axios from "axios";
-import reduxStoreConfig from "./reduxConfig"; // Import hàm reduxStoreConfig để lấy store
-import { authAction } from "../stores/actions"; // Import action logout
+import reduxStoreConfig from "./reduxConfig";
+import { authAction } from "../stores/actions";
 
-// Tạo instance của axios với baseURL
+// Khởi tạo store một lần (dù có dữ liệu chưa thì vẫn là instance store thật)
+const { store } = reduxStoreConfig();
+
 const instance = axios.create({
   baseURL: process.env.REACT_APP_SERVER_URL,
   headers: {
@@ -10,25 +12,22 @@ const instance = axios.create({
   },
 });
 
-// Lấy store từ reduxStoreConfig
-const { store } = reduxStoreConfig();
-
-// Thêm interceptor cho request
+// Luôn lấy token mới nhất trong request
 instance.interceptors.request.use(
   function (config) {
-    // Thêm xử lý trước khi gửi request, ví dụ: thêm token vào header nếu cần
+    const token = store.getState().auth.token;
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
     return config;
   },
   function (error) {
-    // Xử lý lỗi của request
     return Promise.reject(error);
   }
 );
 
-// Thêm interceptor cho response
 instance.interceptors.response.use(
   function (response) {
-    // Xử lý response thành công
     return response;
   },
   function (error) {
@@ -37,10 +36,9 @@ instance.interceptors.response.use(
     }
 
     if (error.response) {
-      // Nếu có response từ server (kể cả lỗi), trả về response đó
       return Promise.resolve(error.response);
     }
-    
+
     return Promise.reject(error);
   }
 );

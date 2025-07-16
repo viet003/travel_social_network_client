@@ -1,6 +1,6 @@
 import React from "react";
 
-const Modal = ({ open, onClose, children }) => {
+const Modal = ({ open, type, onClose, children }) => {
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ${open ? 'visible opacity-100' : 'invisible opacity-0'}`}
@@ -11,7 +11,7 @@ const Modal = ({ open, onClose, children }) => {
       onClick={onClose}
     >
       <div
-        className={`bg-white rounded-xl shadow-lg p-6 w-full max-w-md relative transform transition-all duration-300 ${open ? 'scale-100' : 'scale-95'}`}
+        className={`bg-white rounded-xl shadow-lg p-6 w-full ${type === "signup" ? "max-w-xl" : "max-w-md"} relative transform transition-all duration-300 ${open ? 'scale-100' : 'scale-95'}`}
         onClick={e => e.stopPropagation()}
       >
         <button

@@ -5,17 +5,21 @@ import { PiStripeLogo } from "react-icons/pi";
 import { CiSaveDown1 } from "react-icons/ci";
 import { TiMessages } from "react-icons/ti";
 import { CgProfile } from "react-icons/cg";
-
-
+import { Link } from 'react-router-dom';
+import { pathDomain } from './../../utilities/pathDomain';
+import { useSelector } from 'react-redux';
 
 const SidebarLeft = () => {
+    
+    const { userId } = useSelector(state => state.auth)
+    
     return (
         <div className='fixed top-0 left-0 h-screen overflow-y-auto scrollbar-hide'>
-            <aside className="flex-col hidden min-h-screen px-6 py-6 bg-white border-r w-80 lg:flex">
-                <a href="#" className="flex items-center gap-2 mb-2 ">
+            <aside className="flex-col hidden min-h-screen px-6 py-6 bg-white border-r w-80 xl:flex">
+                <Link to={pathDomain.HOME} className="flex items-center gap-2 mb-2 ">
                     <MdOutlineExplore className="text-blue-600 w-7 h-7" />
                     <span className="text-2xl font-bold text-blue-600">TravelNest</span>
-                </a>
+                </Link>
 
                 {/* Search Block */}
                 <div className="mb-6">
@@ -42,10 +46,10 @@ const SidebarLeft = () => {
                 </div>
                 <hr className="mb-8 border-gray-200" />
                 <nav className="flex flex-col gap-2 mb-8">
-                    <button className="flex items-center gap-3 px-3 py-2 font-semibold text-blue-600 rounded-lg bg-blue-50">
+                    <Link to={pathDomain.HOME} className="flex items-center gap-3 px-3 py-2 font-semibold text-blue-600 rounded-lg bg-blue-50">
                         <BiHomeHeart className="w-5 h-5" />
                         Home Feed
-                    </button>
+                    </Link>
                     <button className="flex items-center gap-3 px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
                         <MdOutlineExplore className="w-5 h-5" />
                         Explore
@@ -62,10 +66,10 @@ const SidebarLeft = () => {
                         <TiMessages className="w-5 h-5" />
                         Messages
                     </button>
-                    <button className="flex items-center gap-3 px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
+                    <Link to={`user/${userId}`} className="flex items-center gap-3 px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
                         <CgProfile className="w-5 h-5" />
                         Profile
-                    </button>
+                    </Link>
                 </nav>
                 <hr className="mb-8 border-gray-200" />
                 <div>

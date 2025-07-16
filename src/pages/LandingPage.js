@@ -174,10 +174,10 @@ const LandingPage = () => {
         </div>
       </footer>
       {/* Modal hiển thị login/signup */}
-      <Modal open={openLogin} onClose={handleCloseModal}>
+      <Modal open={openLogin} type={modalType} onClose={handleCloseModal}>
         <LoginForm modalType={modalType} onSwitchToSignUp={switchToSignUp} />
       </Modal>
-      <Modal open={openSignUp} onClose={handleCloseModal}>
+      <Modal open={openSignUp} type={modalType} onClose={handleCloseModal}>
         <SignUpForm modalType={modalType} onSwitchToLogin={switchToLogin} />
       </Modal>
       <ToastContainer position="top-right" autoClose={2000} />

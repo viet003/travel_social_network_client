@@ -34,9 +34,12 @@ const LoginForm = ({ modalType, onSwitchToSignUp }) => {
 
     setLoading(true);
     try {
-      const res = await dispatch(authAction.login({ email, password }));
+      const res = await dispatch(authAction.login({
+        email: email.toLowerCase().trim(),
+        password: password.trim()
+      }));
       console.log("Login response:", res);
-      if (res.status === 200) {
+      if (res.status === "SUCCESS") {
         toast.success("Login successful!");
         setTimeout(() => {
           navigate("/");
@@ -86,7 +89,7 @@ const LoginForm = ({ modalType, onSwitchToSignUp }) => {
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0zm0 0v1a4 4 0 01-8 0v-1" /></svg>
             </span>
-            <input type="text" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email" className="w-full py-2 pl-10 pr-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email" className="w-full py-2 pl-10 pr-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200" />
           </div>
         </div>
         <div>

@@ -6,7 +6,7 @@ export const login = (payload) => async (dispatch) => {
         const response = await apiLoginService(payload)
         
 
-        if(response?.status === 200) {    
+        if(response?.status === "SUCCESS") {    
             dispatch({
                 type: actionTypes.LOGIN_SUCCESS,
                 data: response?.data
@@ -48,4 +48,14 @@ export const checkAuthStatus = () => (dispatch, getState) => {
     }
 };
 
+
+export const updateAvatarImg = (imgUrl) => ({
+    type: actionTypes.UPDATE_AVATARIMG,
+    avatar: imgUrl,
+});
+
+export const updateCoverImg = (imgUrl) => ({
+    type: actionTypes.UPDATE_COVERIMG,
+    cover: imgUrl,
+});
 

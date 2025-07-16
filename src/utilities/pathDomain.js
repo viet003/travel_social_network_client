@@ -4,5 +4,6 @@ export const pathDomain = {
     FORGOTPASS: "/forgot-pass",
     LANDING: "/landing",
     SIGNUP: "/signup",
+    USER: "/user/:userId",
     STAR: "*"
 }

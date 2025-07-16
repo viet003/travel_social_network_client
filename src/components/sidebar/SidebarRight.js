@@ -1,28 +1,39 @@
 import React from 'react'
+import { IoIosLogOut } from "react-icons/io";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import { useDispatch, useSelector } from 'react-redux';
+import { authAction } from '../../stores/actions';
+import { useNavigate } from 'react-router-dom';
+import avatardf from '../../assets/images/avatardf.jpg'
 
 const SidebarRight = () => {
+
+    const dispatch = useDispatch();
+    const { lastName, userId, avatar } = useSelector(state => state.auth);
+    const navigate = useNavigate();
+    
     return (
-        <aside className = "fixed top-0 right-0 h-screen overflow-y-auto">
+        <aside className="fixed top-0 right-0 h-screen overflow-y-auto">
             <div className="flex-col hidden min-h-screen px-6 py-8 border-l w-80 xl:flex bg-gray-50">
                 {/* User Profile */}
                 <div className="pb-6 mb-8 border-b border-gray-200">
                     <div className="flex items-center gap-3 mb-4">
-                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="avatar" className="object-cover w-12 h-12 rounded-full" />
-                        <button className="flex-1 text-left">
-                            <div className="font-semibold text-gray-800 text-md">Sarah Johnson</div>
+                        <img src={`${avatar !== null ? avatar : avatardf}`} alt="avatar" className="object-cover w-12 h-12 rounded-full" />
+                        <button className="flex-1 text-left"
+                            onClick={() => navigate(`/user/${userId}`)}
+                        >
+                            <div className="font-semibold text-gray-800 text-md">Hi, {lastName} </div>
                             <div className="text-xs text-gray-500">Travel Enthusiast</div>
                         </button>
                         <button className="relative p-2 text-gray-400 hover:text-gray-600">
-                            <svg className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-5 5v-5zM10.5 3.75a6 6 0 00-6 6v7.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 17.25V9.75a6 6 0 00-6-6z" />
-                            </svg>
+                            <IoMdNotificationsOutline className="w-7 h-7" />
                             <span className="absolute w-2 h-2 bg-red-500 rounded-full top-1 right-1"></span>
                         </button>
                         {/* Logout Button */}
-                        <button className="p-2 text-gray-400 hover:text-red-500" title="Logout">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-7 h-7">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 12H9m9 0l-3-3m3 3l-3 3" />
-                            </svg>
+                        <button className="p-2 text-gray-400 hover:text-red-500" title="Logout"
+                            onClick={() => dispatch(authAction.logout())}
+                        >
+                            <IoIosLogOut className="w-7 h-7" />
                         </button>
                     </div>
                 </div>

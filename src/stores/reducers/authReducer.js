@@ -1,45 +1,74 @@
 import actionTypes from "../types/actionTypes";
 
 const initState = {
+    userId: null,
+    lastName: null,
+    avatar: null,
+    cover: null,
     isLoggedIn: false,
     token: null,
     msg: '',
-}
-
+};
 
 const authReducer = (state = initState, action) => {
     switch (action.type) {
         case actionTypes.LOGIN_SUCCESS:
-            return ({
+            return {
                 ...state,
+                userId: action?.data?.userId,
+                lastName: action?.data?.userProfile?.lastName,
+                avatar: action?.data?.avatarImg,
+                cover: action?.data?.coverImg,
                 isLoggedIn: true,
                 token: action?.data?.token,
                 msg: '',
-            })
+            };
         case actionTypes.LOGIN_FAIL:
-            return ({
+            return {
                 ...state,
+                userId: null,
+                lastName: null,
+                avatar: null,
+                cover: null,
                 isLoggedIn: false,
                 token: null,
                 msg: action?.data?.msg ? action?.data?.msg : '',
-            })
+            };
         case actionTypes.LOGOUT:
-            return ({
+            return {
                 ...state,
+                userId: null,
+                lastName: null,
+                avatar: null,
+                cover: null,
                 isLoggedIn: false,
                 token: null,
                 msg: '',
-            })
+            };
         case actionTypes.CHECK_AUTH_STATUS:
-            return ({
+            return {
                 ...state,
+                userId: null,
+                lastName: null,
+                avatar: null,
+                cover: null,
                 isLoggedIn: !!action?.data?.token,
                 token: action?.data?.token || null,
                 msg: action?.data?.msg || '',
-            })
+            };
+        case actionTypes.UPDATE_AVATARIMG:
+            return {
+                ...state,
+                avatar: action.avatar,
+            };
+        case actionTypes.UPDATE_COVERIMG:
+            return {
+                ...state,
+                cover: action.cover,
+            };
         default:
             return state;
     }
-}
+};
 
-export default authReducer
+export default authReducer;
