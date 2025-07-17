@@ -4,10 +4,10 @@ export { default as ProtectedRoute } from './component/ProtectedRoute';
 export { default as LoadingSpinner } from './component/LoadingSpinner';
 export { default as LocationDropdown } from './component/LocationDropdown';
 export { default as Modal } from './Modal';
-export { default as LoginModal } from './model/LoginModal';
-export { default as SignUpModal } from './model/SignUpModal';
-export { default as PostModal } from './model/PostModal';
-export { default as EditProfileModal } from './model/EditProfileModal';
-export { default as PostCreateModal } from './model/PostCreateModal';
+export { default as LoginModal } from './modal/LoginModal';
+export { default as SignUpModal } from './modal/SignUpModal';
+export { default as PostModal } from './modal/PostModal';
+export { default as EditProfileModal } from './modal/EditProfileModal';
+export { default as PostCreateModal } from './modal/PostCreateModal';
 
 

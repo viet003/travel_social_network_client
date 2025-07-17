@@ -2,6 +2,7 @@ import actionTypes from "../types/actionTypes";
 
 const initState = {
     userId: null,
+    firstName: null,
     lastName: null,
     avatar: null,
     cover: null,
@@ -16,6 +17,7 @@ const authReducer = (state = initState, action) => {
             return {
                 ...state,
                 userId: action?.data?.userId,
+                firstName: action?.data?.userProfile?.firstName,
                 lastName: action?.data?.userProfile?.lastName,
                 avatar: action?.data?.avatarImg,
                 cover: action?.data?.coverImg,
@@ -27,6 +29,7 @@ const authReducer = (state = initState, action) => {
             return {
                 ...state,
                 userId: null,
+                firstName: null,
                 lastName: null,
                 avatar: null,
                 cover: null,
@@ -38,6 +41,7 @@ const authReducer = (state = initState, action) => {
             return {
                 ...state,
                 userId: null,
+                firstName: null,
                 lastName: null,
                 avatar: null,
                 cover: null,
@@ -49,6 +53,7 @@ const authReducer = (state = initState, action) => {
             return {
                 ...state,
                 userId: null,
+                firstName: null,
                 lastName: null,
                 avatar: null,
                 cover: null,
