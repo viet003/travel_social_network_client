@@ -1,12 +1,11 @@
 import React from 'react'
-import { PostModel } from '../components/model';
-import { PostCreateModel } from '../components/model';
+import { PostModal, PostCreateModal } from '../components';
 
 const HomePage = () => {
   return (
     <>
       {/* Create Post */}
-      <PostCreateModel />
+      <PostCreateModal />
 
       {/* Filter Tabs */}
       <div className="flex items-center justify-between mb-4">
@@ -19,7 +18,7 @@ const HomePage = () => {
       </div>
 
       {/* Post 1 */}
-      <PostModel
+      <PostModal
         avatar="https://randomuser.me/api/portraits/women/44.jpg"
         userName="Sarah Parker"
         location="Santorini, Greece"
@@ -43,7 +42,7 @@ const HomePage = () => {
         onShare={() => {}}
       />
       {/* Post 2 */}
-      <PostModel
+      <PostModal
         avatar="https://randomuser.me/api/portraits/men/47.jpg"
         userName="David Thompson"
         location="Bali, Indonesia"

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdOutlineExplore } from 'react-icons/md';
-import Modal from '../components/Modal';
-import { LoginForm, SignUpForm } from "../components/model";
+import { LoginModal, SignUpModal, Modal } from "../components";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
   
@@ -175,10 +174,10 @@ const LandingPage = () => {
       </footer>
       {/* Modal hiển thị login/signup */}
       <Modal open={openLogin} type={modalType} onClose={handleCloseModal}>
-        <LoginForm modalType={modalType} onSwitchToSignUp={switchToSignUp} />
+        <LoginModal modalType={modalType} onSwitchToSignUp={switchToSignUp} />
       </Modal>
       <Modal open={openSignUp} type={modalType} onClose={handleCloseModal}>
-        <SignUpForm modalType={modalType} onSwitchToLogin={switchToLogin} />
+        <SignUpModal modalType={modalType} onSwitchToLogin={switchToLogin} />
       </Modal>
       <ToastContainer position="top-right" autoClose={2000} />
     </div>
