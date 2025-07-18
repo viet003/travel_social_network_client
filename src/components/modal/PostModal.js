@@ -4,20 +4,28 @@ import { SlBubble } from "react-icons/sl";
 import { SlHeart } from "react-icons/sl";
 import { IoEarth } from "react-icons/io5";
 import { HiOutlineEmojiHappy } from "react-icons/hi";
+import { FaPlay } from "react-icons/fa";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import PostDetailModal from './PostDetailModal';
 import { useSelector } from 'react-redux';
+import avatardf from '../../assets/images/avatardf.jpg';
 
 const PostModal = ({
+  postId,
   avatar,
   userName,
   location,
   timeAgo,
   content,
   image,
-  images = [],
+  video,
+  mediaList = [],
   likeCount = 0,
   commentCount = 0,
   shareCount = 0,
+  tags = [],
+  isShare = false,
+  status,
   comments = [],
   onShare,
   onImageClick,
@@ -29,15 +37,34 @@ const PostModal = ({
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [isLiked, setIsLiked] = useState(liked);
   const [currentLikeCount, setCurrentLikeCount] = useState(likeCount);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { avatar: currentUserAvatar } = useSelector(state => state.auth);
-  // Handle both single image and multiple images
-  const displayImages = images.length > 0 ? images : (image ? [image] : []);
+  
+  // Process mediaList to separate images and videos
+  const imageMedia = mediaList.filter(media => media.type === 'IMAGE');
+  const videoMedia = mediaList.filter(media => media.type === 'VIDEO');
+  
+  // Handle both single image and multiple images from mediaList
+  const displayImages = imageMedia.length > 0 ? imageMedia.map(media => media.url) : (image ? [image] : []);
+  const displayVideo = videoMedia.length > 0 ? videoMedia[0].url : video;
 
   const handleImageClick = (img, index) => {
     setSelectedImageIndex(index);
     if (onImageClick) {
       onImageClick(img, index);
     }
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => 
+      prev === 0 ? displayImages.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => 
+      prev === displayImages.length - 1 ? 0 : prev + 1
+    );
   };
 
   const handleLike = () => {
@@ -67,102 +94,105 @@ const PostModal = ({
       <img
         src={img}
         alt="post"
-        className="object-cover w-full max-h-[450px] rounded-xl cursor-pointer hover:opacity-95 transition-opacity"
+        className="object-cover w-full max-h-[350px] rounded-xl cursor-pointer hover:opacity-95 transition-opacity"
         onClick={() => handleImageClick(img, index)}
       />
     </div>
   );
 
-  const renderMultipleImages = () => {
-    if (displayImages.length === 2) {
-      return (
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          {displayImages.map((img, index) => (
-            <img
-              key={index}
-              src={img}
-              alt={`post-${index}`}
-              className="object-cover w-full h-[200px] rounded-xl cursor-pointer hover:opacity-95 transition-opacity"
-              onClick={() => handleImageClick(img, index)}
-            />
-          ))}
-        </div>
-      );
+  const renderVideo = (videoUrl) => (
+    <div className="relative mb-3">
+      <video
+        src={videoUrl}
+        controls
+        className="object-cover w-full max-h-[350px] rounded-xl"
+        poster="" // You can add a poster image if available
+      >
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  );
+
+  const renderImageSlider = () => {
+    if (displayImages.length === 0) return null;
+    
+    if (displayImages.length === 1) {
+      return renderSingleImage(displayImages[0], 0);
     }
 
-    if (displayImages.length === 3) {
-      return (
-        <div className="mb-3">
-          <div className="mb-2">
-            <img
-              src={displayImages[0]}
-              alt="post-0"
-              className="object-cover w-full h-[250px] rounded-xl cursor-pointer hover:opacity-95 transition-opacity"
-              onClick={() => handleImageClick(displayImages[0], 0)}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {displayImages.slice(1).map((img, index) => (
-              <img
-                key={index + 1}
-                src={img}
-                alt={`post-${index + 1}`}
-                className="object-cover w-full h-[150px] rounded-xl cursor-pointer hover:opacity-95 transition-opacity"
-                onClick={() => handleImageClick(img, index + 1)}
-              />
-            ))}
+    return (
+      <div className="relative mb-3">
+        {/* Main Image */}
+        <div className="relative overflow-hidden rounded-xl max-h-[350px]">
+          <img
+            src={displayImages[currentImageIndex]}
+            alt={`post-${currentImageIndex}`}
+            className="object-cover w-full max-h-[350px] transition-transform duration-300 ease-in-out cursor-pointer hover:opacity-95"
+            onClick={() => handleImageClick(displayImages[currentImageIndex], currentImageIndex)}
+          />
+          
+          {/* Navigation Arrows */}
+          <button
+            onClick={handlePrevImage}
+            className="absolute p-2 text-white transition-all duration-200 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full left-2 top-1/2 hover:bg-opacity-70"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          
+          <button
+            onClick={handleNextImage}
+            className="absolute p-2 text-white transition-all duration-200 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full right-2 top-1/2 hover:bg-opacity-70"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+          
+          {/* Image Counter */}
+          <div className="absolute px-2 py-1 text-sm text-white bg-black bg-opacity-50 rounded-full bottom-2 right-2">
+            {currentImageIndex + 1} / {displayImages.length}
           </div>
         </div>
-      );
-    }
+      </div>
+    );
+  };
 
-    if (displayImages.length >= 4) {
-      return (
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          {displayImages.slice(0, 3).map((img, index) => (
-            <img
-              key={index}
-              src={img}
-              alt={`post-${index}`}
-              className={`object-cover rounded-xl cursor-pointer hover:opacity-95 transition-opacity ${index === 0 ? 'col-span-2 h-[200px]' : 'h-[150px]'
-                }`}
-              onClick={() => handleImageClick(img, index)}
-            />
-          ))}
-          <div className="relative h-[150px]">
-            <img
-              src={displayImages[3]}
-              alt="post-3"
-              className="object-cover w-full h-full rounded-xl cursor-pointer hover:opacity-95 transition-opacity"
-              onClick={() => handleImageClick(displayImages[3], 3)}
-            />
-            {displayImages.length > 4 && (
-              <div
-                className="absolute inset-0 bg-black bg-opacity-50 rounded-xl flex items-center justify-center cursor-pointer hover:bg-opacity-60 transition-all"
-                onClick={() => handleImageClick(displayImages[3], 3)}
-              >
-                <span className="text-white text-xl font-semibold">+{displayImages.length - 4}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
+  const renderTags = () => {
+    if (!tags || tags.length === 0) return null;
+    return (
+      <div className="flex flex-wrap gap-2 mb-3">
+        {tags.map((tag, index) => (
+          <span
+            key={index} // Ideally, use tag.tagId if it's unique
+            className="px-2 py-1 text-xs text-blue-600 bg-blue-100 rounded-full cursor-pointer hover:bg-blue-200"
+          >
+            #{tag.title} {/* Use the 'title' property instead of the whole object */}
+          </span>
+        ))}
+      </div>
+    );
   };
 
   return (
     <>
-      <div className="p-4 mb-6 bg-white shadow rounded-xl">
+      <div className="w-[620px] p-4 mb-6 bg-white shadow rounded-xl">
+        {/* Share indicator */}
+        {isShare && (
+          <div className="flex items-center gap-2 mb-2 text-sm text-gray-500">
+            <SlActionRedo className="w-4 h-4" />
+            <span>Shared a post</span>
+          </div>
+        )}
+
         <div className="flex items-center gap-3 mb-2">
           <img src={avatar} alt="avatar" className="object-cover w-10 h-10 rounded-full" />
           <div className='flex flex-col'>
             <div className="flex items-center gap-2">
               <span className="font-semibold text-gray-800">{userName}</span>
-              <span className="text-xs text-gray-500">• {location}</span>
+              {location && <span className="text-xs text-gray-500">• {location}</span>}
             </div>
-            <span className="text-xs text-gray-400 flex items-center gap-1 align-item-center">
+            <span className="flex items-center gap-1 text-xs text-gray-400 align-item-center">
               {timeAgo}
               <IoEarth className="w-3 h-3" />
+              {status && <span className="ml-1 text-xs">• {status}</span>}
             </span>
           </div>
           <div className="ml-auto">
@@ -180,12 +210,12 @@ const PostModal = ({
           {content}
         </div>
 
-        {/* Image rendering logic */}
-        {displayImages.length > 0 && (
-          displayImages.length === 1
-            ? renderSingleImage(displayImages[0], 0)
-            : renderMultipleImages()
-        )}
+        {/* Tags */}
+        {renderTags()}
+
+        {/* Media rendering logic */}
+        {displayVideo && renderVideo(displayVideo)}
+        {displayImages.length > 0 && renderImageSlider()}
 
         {/* Action buttons */}
         <div className="flex items-center gap-6 pt-3 text-sm text-gray-500">
@@ -198,29 +228,29 @@ const PostModal = ({
             <SlHeart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
             {currentLikeCount}
           </div>
-          <div className="flex items-center gap-1 cursor-pointer hover:text-blue-500 transition-colors" onClick={openCommentModal}>
+          <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-blue-500" onClick={openCommentModal}>
             <SlBubble className="w-5 h-5" />
             {commentCount}
           </div>
-          <div className="flex items-center gap-1 cursor-pointer hover:text-green-500 transition-colors" onClick={onShare}>
+          <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-green-500" onClick={onShare}>
             <SlActionRedo className="w-5 h-5" />
             {shareCount}
           </div>
         </div>
 
         {/* Comment button - just a button to open modal */}
-        <button className="mt-3 w-full" onClick={openCommentModal}>
-          <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
+        <button className="w-full mt-3" onClick={openCommentModal}>
+          <div className="flex items-center gap-3 p-2 transition-colors rounded-lg hover:bg-gray-50">
             <img
-              src={currentUserAvatar}
+              src={currentUserAvatar || avatardf}
               alt="current user"
-              className="object-cover w-8 h-8 rounded-full flex-shrink-0"
+              className="flex-shrink-0 object-cover w-8 h-8 rounded-full"
             />
-            <div className="flex-1 relative">
-              <div className="w-full px-4 py-2 bg-gray-100 rounded-full text-left text-gray-500 cursor-pointer">
+            <div className="relative flex-1">
+              <div className="w-full px-4 py-2 text-left text-gray-500 bg-gray-100 rounded-full cursor-pointer">
                 Write a comment...
               </div>
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <div className="absolute text-gray-400 transform -translate-y-1/2 right-2 top-1/2">
                 <HiOutlineEmojiHappy className="w-5 h-5" />
               </div>
             </div>
@@ -240,16 +270,21 @@ const PostModal = ({
       <PostDetailModal
         isOpen={showCommentModal}
         onClose={closeCommentModal}
+        postId={postId}
         avatar={avatar}
         userName={userName}
         location={location}
         timeAgo={timeAgo}
         content={content}
         displayImages={displayImages}
+        displayVideo={displayVideo}
         selectedImageIndex={selectedImageIndex}
         comments={comments}
         currentUserAvatar={currentUserAvatar}
         onCommentSubmit={handleCommentSubmit}
+        tags={tags}
+        isShare={isShare}
+        status={status}
       />
     </>
   );

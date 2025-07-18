@@ -1,9 +1,7 @@
-import actionTypes from "../types/actionTypes";
-
-export const stateAction = (payload) => async (dispatch) => {
+export const changeState = (typeState) => async (dispatch) => {
+    console.log(typeState)
     dispatch({
-        type: actionTypes.STATE,
-        data: payload
+        type: typeState,
     })
 }
 

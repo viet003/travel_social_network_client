@@ -8,37 +8,23 @@ import {
   CheckCircle,
   Camera,
   Globe,
-  Calendar,
-  Heart,
   MessageSquare,
   Bookmark,
   UserPlus,
 } from "lucide-react"
 import { PostModal, EditProfileModal, PostCreateModal } from '../components';
 import { apiGetUserProfile, apiUpdateUserImgService, apiUpdateUserService } from '../services/userService';
+import { apiGeAllPostByUser } from '../services/postService';
 import { useDispatch } from "react-redux";
 import { authAction } from '../stores/actions';
 import { useSelector } from "react-redux";
 import avatardf from '../assets/images/avatardf.jpg';
 
-
-
-const travelPhotos = [
-  { id: 1, src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", location: "Santorini" },
-  { id: 2, src: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80", location: "Bali" },
-  { id: 3, src: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80", location: "Paris" },
-  // { id: 4, src: "/placeholder.svg?height=300&width=400", location: "NYC Skyline", category: "cityscape" },
-  // { id: 5, src: "/placeholder.svg?height=450&width=400", location: "Tuscany Countryside", category: "landscape" },
-  // { id: 6, src: "/placeholder.svg?height=300&width=400", location: "Serene Lake", category: "nature" },
-  // { id: 7, src: "/placeholder.svg?height=400&width=400", location: "Tokyo Market", category: "cultural" },
-  // { id: 8, src: "/placeholder.svg?height=350&width=400", location: "Sahara Desert", category: "adventure" },
-  // { id: 9, src: "/placeholder.svg?height=300&width=400", location: "Coral Reef", category: "underwater" },
-]
-
 const UserPage = () => {
   const { userId } = useParams();
   const [activeTab, setActiveTab] = useState("posts")
   const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const inputAvatarRef = useRef();
@@ -46,25 +32,49 @@ const UserPage = () => {
   const { userId: currentUserId } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [createSuccess, setCreateSuccess] = useState(false);
+
+  const fetchUserData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Gọi đồng thời 2 API bằng Promise.all
+      const [userProfileResponse, userPostsResponse] = await Promise.all([
+        apiGetUserProfile(userId),
+        apiGeAllPostByUser(userId)
+      ]);
+
+      console.log("User profile data:", userProfileResponse);
+      console.log("User posts data:", userPostsResponse);
+
+      // Xử lý dữ liệu user profile
+      setUser(userProfileResponse?.data);
+
+      // Xử lý dữ liệu posts
+      setPosts(userPostsResponse?.content || []);
+      console.log("posts", posts)
+
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+      setError(err?.message || 'Error fetching user data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     console.log("userId", userId);
     if (!userId) return;
-    const fetchUser = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await apiGetUserProfile(userId);
-        console.log(data)
-        setUser(data?.data);
-      } catch (err) {
-        setError(err?.message || 'Error fetching user');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
+
+    fetchUserData();
   }, [userId]);
+
+  useEffect(() => {
+    if (createSuccess) {
+      fetchUserData();
+      setCreateSuccess(false);
+    }
+  }, [createSuccess]);
 
   const handleUpdateImg = async (file, type) => {
     if (!file || !userId) return;
@@ -72,7 +82,6 @@ const UserPage = () => {
       setLoading(true);
       setError(null);
       const formData = new FormData();
-      // formData.append('userId', userId);
       type === "avatar" ? formData.append('avatarImg', file) : formData.append('coverImg', file);
       const rs = await apiUpdateUserImgService(formData);
       if (rs?.status === "SUCCESS") {
@@ -87,6 +96,21 @@ const UserPage = () => {
       setError(err?.message || 'Error updating avatar');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Hàm format thời gian
+  const formatTimeAgo = (createdAt) => {
+    const now = new Date();
+    const postDate = new Date(createdAt);
+    const diffInMinutes = Math.floor((now - postDate) / (1000 * 60));
+
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} minutes ago`;
+    } else if (diffInMinutes < 1440) {
+      return `${Math.floor(diffInMinutes / 60)} hours ago`;
+    } else {
+      return `${Math.floor(diffInMinutes / 1440)} days ago`;
     }
   };
 
@@ -212,11 +236,12 @@ const UserPage = () => {
                 )
               }
               <p className="mb-4 text-sm leading-relaxed text-white/90">
-                Adventure seeker | Travel photographer | 35 countries 
+                {user?.userProfile?.bio || "Adventure seeker | Travel photographer | 35 countries"}
               </p>
             </div>
           </div>
         </div>
+
         {/* Modal chỉnh sửa profile */}
         <EditProfileModal
           open={openEditModal}
@@ -250,15 +275,15 @@ const UserPage = () => {
         <div className="flex items-center justify-center py-4 border-b border-gray-100">
           <div className="flex gap-8">
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-900">248</div>
+              <div className="text-2xl font-bold text-gray-900">{posts.length}</div>
               <div className="text-sm text-gray-600">Posts</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-900">12.4K</div>
+              <div className="text-2xl font-bold text-gray-900">{user?.followersCount || 0}</div>
               <div className="text-sm text-gray-600">Followers</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-900">892</div>
+              <div className="text-2xl font-bold text-gray-900">{user?.followingCount || 0}</div>
               <div className="text-sm text-gray-600">Following</div>
             </div>
           </div>
@@ -304,36 +329,74 @@ const UserPage = () => {
 
       {/* Main Content */}
       <div className="px-6 py-8 mx-auto max-w-7xl">
-        <PostCreateModal />
-        <div className="flex gap-8">
-          {/* Photo Gallery */}
-          <div className="flex-1">
-            <div className="">
-              {travelPhotos.map((photo) => (
-                <PostModal
-                  key={photo.id}
-                  avatar="https://randomuser.me/api/portraits/men/47.jpg" // hoặc lấy từ user nếu có
-                  userName="Demo User"
-                  location={photo.location}
-                  timeAgo="1 hour ago"
-                  content="Check out this amazing place!"
-                  image={photo.src || "/placeholder.svg"}
-                  likeCount={124}
-                  commentCount={23}
-                  comments={[
-                    {
-                      avatar: "https://randomuser.me/api/portraits/women/48.jpg",
-                      userName: "Lisa Chen",
-                      text: "Wow, looks great!"
-                    }
-                  ]}
-                  onShare={() => { }}
-                />
-              ))}
+        {userId === currentUserId && <PostCreateModal setCreateSuccess={setCreateSuccess} />}
+
+        {loading && (
+          <div className="flex justify-center py-8">
+            <div className="text-gray-500">Loading...</div>
+          </div>
+        )}
+
+        {error && (
+          <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        <div className="flex w-full gap-8">
+          {/* Posts Gallery */}
+          <div className="flex-1 w-full">
+            <div className="w-full space-y-6">
+              {posts.length === 0 && !loading ? (
+                <div className="py-12 text-center">
+                  <Camera size={48} className="mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500">No posts yet</p>
+                </div>
+              ) : (
+                posts.map((post) => (
+                  <PostModal
+                    key={post.postId}
+                    postId={post.postId}
+                    avatar={user?.avatarImg || avatardf}
+                    userName={`${user?.userProfile?.firstName || ''} ${user?.userProfile?.lastName || ''}`.trim() || 'Unknown User'}
+                    location={post.location}
+                    timeAgo={formatTimeAgo(post.createdAt)}
+                    content={post.content}
+                    // Lấy ảnh đầu tiên từ mediaList hoặc null
+                    image={post.mediaList?.find(media => media.type === 'IMAGE')?.url || null}
+                    // Lấy video đầu tiên từ mediaList hoặc null
+                    video={post.mediaList?.find(media => media.type === 'VIDEO')?.url || null}
+                    // Truyền toàn bộ mediaList nếu PostModal hỗ trợ
+                    mediaList={post.mediaList || []}
+                    likeCount={post.likeCount || 0}
+                    commentCount={post.commentCount || 0}
+                    shareCount={post.shareCount || 0}
+                    tags={post.tags || []}
+                    isShare={post.isShare}
+                    status={post.status}
+                    comments={[]} // Sẽ được load từ API khác
+                    onShare={() => {
+                      // Handle share logic
+                      console.log('Share post:', post.postId);
+                    }}
+                    onLike={() => {
+                      // Handle like logic
+                      console.log('Like post:', post.postId);
+                    }}
+                    onComment={() => {
+                      // Handle comment logic
+                      console.log('Comment on post:', post.postId);
+                    }}
+                  />
+                ))
+              )}
             </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar - có thể thêm sau */}
+          {/* <div className="w-80">
+            
+          </div> */}
         </div>
       </div>
     </div>

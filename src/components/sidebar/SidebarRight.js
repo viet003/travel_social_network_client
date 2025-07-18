@@ -2,9 +2,10 @@ import React from 'react'
 import { IoIosLogOut } from "react-icons/io";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { useDispatch, useSelector } from 'react-redux';
-import { authAction } from '../../stores/actions';
+import { authAction, stateAction } from '../../stores/actions';
 import { useNavigate } from 'react-router-dom';
 import avatardf from '../../assets/images/avatardf.jpg'
+import actionTypes from '../../stores/types/actionTypes';
 
 const SidebarRight = () => {
 
@@ -20,11 +21,15 @@ const SidebarRight = () => {
                     <div className="flex items-center gap-3 mb-4">
                         <img src={`${avatar !== null ? avatar : avatardf}`} alt="avatar" className="object-cover w-12 h-12 rounded-full" />
                         <button className="flex-1 text-left"
-                            onClick={() => navigate(`/user/${userId}`)}
+                            onClick={() => {
+                                navigate(`/user/${userId}`);
+                                dispatch(stateAction.changeState(actionTypes.PROFILE_ACTIVE));
+                            }}
                         >
                             <div className="font-semibold text-gray-800 text-md">Hi, {lastName} </div>
                             <div className="text-xs text-gray-500">Travel Enthusiast</div>
                         </button>
+                        {/* tạo dropdown khi nhấn vào giống ảnh */}
                         <button className="relative p-2 text-gray-400 hover:text-gray-600">
                             <IoMdNotificationsOutline className="w-7 h-7" />
                             <span className="absolute w-2 h-2 bg-red-500 rounded-full top-1 right-1"></span>
