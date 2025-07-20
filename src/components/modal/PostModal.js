@@ -9,9 +9,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import PostDetailModal from './PostDetailModal';
 import { useSelector } from 'react-redux';
 import avatardf from '../../assets/images/avatardf.jpg';
+import * as helperFunction from "../../utilities/helperFunction"
+import { useNavigate } from 'react-router-dom';
 
 const PostModal = ({
   postId,
+  userId,
   avatar,
   userName,
   location,
@@ -39,11 +42,13 @@ const PostModal = ({
   const [currentLikeCount, setCurrentLikeCount] = useState(likeCount);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { avatar: currentUserAvatar } = useSelector(state => state.auth);
-  
+
+  const navigate = useNavigate()
+
   // Process mediaList to separate images and videos
   const imageMedia = mediaList.filter(media => media.type === 'IMAGE');
   const videoMedia = mediaList.filter(media => media.type === 'VIDEO');
-  
+
   // Handle both single image and multiple images from mediaList
   const displayImages = imageMedia.length > 0 ? imageMedia.map(media => media.url) : (image ? [image] : []);
   const displayVideo = videoMedia.length > 0 ? videoMedia[0].url : video;
@@ -56,13 +61,13 @@ const PostModal = ({
   };
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === 0 ? displayImages.length - 1 : prev - 1
     );
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === displayImages.length - 1 ? 0 : prev + 1
     );
   };
@@ -115,7 +120,7 @@ const PostModal = ({
 
   const renderImageSlider = () => {
     if (displayImages.length === 0) return null;
-    
+
     if (displayImages.length === 1) {
       return renderSingleImage(displayImages[0], 0);
     }
@@ -130,7 +135,7 @@ const PostModal = ({
             className="object-cover w-full max-h-[350px] transition-transform duration-300 ease-in-out cursor-pointer hover:opacity-95"
             onClick={() => handleImageClick(displayImages[currentImageIndex], currentImageIndex)}
           />
-          
+
           {/* Navigation Arrows */}
           <button
             onClick={handlePrevImage}
@@ -138,14 +143,14 @@ const PostModal = ({
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          
+
           <button
             onClick={handleNextImage}
             className="absolute p-2 text-white transition-all duration-200 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full right-2 top-1/2 hover:bg-opacity-70"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
-          
+
           {/* Image Counter */}
           <div className="absolute px-2 py-1 text-sm text-white bg-black bg-opacity-50 rounded-full bottom-2 right-2">
             {currentImageIndex + 1} / {displayImages.length}
@@ -164,7 +169,7 @@ const PostModal = ({
             key={index} // Ideally, use tag.tagId if it's unique
             className="px-2 py-1 text-xs text-blue-600 bg-blue-100 rounded-full cursor-pointer hover:bg-blue-200"
           >
-            #{tag.title} {/* Use the 'title' property instead of the whole object */}
+            #{tag}
           </span>
         ))}
       </div>
@@ -183,14 +188,18 @@ const PostModal = ({
         )}
 
         <div className="flex items-center gap-3 mb-2">
-          <img src={avatar} alt="avatar" className="object-cover w-10 h-10 rounded-full" />
+          <img src={avatar} alt="avatar" className="object-cover w-10 h-10 rounded-full cursor-pointer"
+            onClick={() => {console.log(userId); navigate(`/user/${userId}`)}}
+          />
           <div className='flex flex-col'>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-gray-800">{userName}</span>
+              <span className="font-semibold text-gray-800 cursor-pointer hover:underline hover:text-blue-600"
+                onClick={() => {navigate(`/user/${userId}`)}}
+              >{userName}</span>
               {location && <span className="text-xs text-gray-500">• {location}</span>}
             </div>
             <span className="flex items-center gap-1 text-xs text-gray-400 align-item-center">
-              {timeAgo}
+              {helperFunction.formatTimeAgo(timeAgo)}
               <IoEarth className="w-3 h-3" />
               {status && <span className="ml-1 text-xs">• {status}</span>}
             </span>
@@ -274,7 +283,7 @@ const PostModal = ({
         avatar={avatar}
         userName={userName}
         location={location}
-        timeAgo={timeAgo}
+        timeAgo={helperFunction.formatTimeAgo(timeAgo)}
         content={content}
         displayImages={displayImages}
         displayVideo={displayVideo}

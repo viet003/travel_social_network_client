@@ -1,10 +1,22 @@
 import axiosConfig from "../config/axiosConfig";
 
-export const apiGeAllPostByUser = async (userId) => {
+export const apiGeAllPostByUser = async (userId, page) => {
     try {
         const response = await axiosConfig({
             method: 'GET',
-            url: `post/${userId}`,
+            url: `post/${userId}?page=${page}`,
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error;
+    }
+};
+
+export const apiGetAllPostByStatus = async (page) => {
+    try {
+        const response = await axiosConfig({
+            method: 'GET',
+            url: `post?page=${page}`,
         });
         return response.data;
     } catch (error) {

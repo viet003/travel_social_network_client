@@ -151,7 +151,7 @@ const PostDetailModal = ({
             key={tag.tagId || index}
             className="px-2 py-1 text-xs text-blue-600 transition-colors bg-blue-100 rounded-full cursor-pointer hover:bg-blue-200"
           >
-            #{tag.title}
+            #{tag}
           </span>
         ))}
       </div>
@@ -161,7 +161,7 @@ const PostDetailModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+    <div className="fixed z-50 flex items-center justify-center h-full p-4 bg-black bg-opacity-50 -inset-6">
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden">
         {/* Modal Header */}
         <div className="relative flex items-center justify-center p-4 border-b border-gray-200">

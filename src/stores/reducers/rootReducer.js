@@ -25,7 +25,7 @@ const stateConfig = {
 
 const rootReducer = combineReducers({
     auth: persistReducer(authConfig, authReducer),
-    state: persistReducer(stateConfig, stateReducer)
+    sidebar_tab_active: persistReducer(stateConfig, stateReducer)
 })
 
 

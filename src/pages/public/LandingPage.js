@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdOutlineExplore } from 'react-icons/md';
-import { LoginModal, SignUpModal, Modal } from "../components";
+import { LoginModal, SignUpModal, Modal } from "../../components";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
   

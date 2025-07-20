@@ -10,4 +10,3 @@ export { default as PostModal } from './modal/PostModal';
 export { default as EditProfileModal } from './modal/EditProfileModal';
 export { default as PostCreateModal } from './modal/PostCreateModal';
 
-

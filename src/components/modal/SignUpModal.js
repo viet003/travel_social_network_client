@@ -60,7 +60,7 @@ const SignUpModal = ({ modalType, onSwitchToLogin }) => {
         password: form.password.trim()
       });
       console.log(res)
-      if (res.status === "SUCCESS") {
+      if (res?.status === "SUCCESS") {
         toast.success(res?.message);
         setForm({
           userName: '',
@@ -74,7 +74,7 @@ const SignUpModal = ({ modalType, onSwitchToLogin }) => {
         });
         onSwitchToLogin();
       } else {
-        toast.error(res.message || "Registration failed.");
+        toast.error(res?.message || "Registration failed.");
       }
     } catch (err) {
       toast.error(err?.message || "Something went wrong. Please try again.");

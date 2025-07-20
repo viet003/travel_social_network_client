@@ -12,9 +12,9 @@ const SidebarRight = () => {
     const dispatch = useDispatch();
     const { lastName, userId, avatar } = useSelector(state => state.auth);
     const navigate = useNavigate();
-    
+
     return (
-        <aside className="fixed top-0 right-0 h-screen overflow-y-auto">
+        <aside className="fixed top-0 right-0 h-screen overflow-y-auto z-3">
             <div className="flex-col hidden min-h-screen px-6 py-8 border-l w-80 xl:flex bg-gray-50">
                 {/* User Profile */}
                 <div className="pb-6 mb-8 border-b border-gray-200">
@@ -36,7 +36,11 @@ const SidebarRight = () => {
                         </button>
                         {/* Logout Button */}
                         <button className="p-2 text-gray-400 hover:text-red-500" title="Logout"
-                            onClick={() => dispatch(authAction.logout())}
+                            onClick={() => {
+                                dispatch(authAction.logout());
+                                dispatch(stateAction.changeState(actionTypes.HOME_ACTIVE));
+                            }}
+
                         >
                             <IoIosLogOut className="w-7 h-7" />
                         </button>

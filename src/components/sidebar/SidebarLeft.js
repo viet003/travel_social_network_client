@@ -15,7 +15,7 @@ import { stateAction } from '../../stores/actions';
 const SidebarLeft = () => {
 
     const { userId } = useSelector(state => state.auth)
-    const { tabActive } = useSelector(state => state.state)
+    const { tabActive } = useSelector(state => state.sidebar_tab_active)
     const dispatch = useDispatch();
     
     // State for search dropdown
@@ -41,7 +41,7 @@ const SidebarLeft = () => {
     };
 
     return (
-        <div className='fixed top-0 left-0 h-screen overflow-y-auto scrollbar-hide'>
+        <div className='fixed top-0 left-0 h-screen overflow-y-auto z-3 scrollbar-hide'>
             <aside className="flex-col hidden min-h-screen px-6 py-6 bg-white border-r w-80 xl:flex">
                 <Link to={pathDomain.HOME} className="flex items-center gap-2 mb-2 ">
                     <MdOutlineExplore className="text-blue-600 w-7 h-7" />

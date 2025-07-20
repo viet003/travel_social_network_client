@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { X, Users, Image, Smile, MapPin, MoreHorizontal, Edit, Camera, Hash, Plus } from "lucide-react";
-import { LocationDropdown } from "../../components";
+import { LoadingSpinner, LocationDropdown } from "../../components";
 import avatardf from '../../assets/images/avatardf.jpg'
 import { MdOutlineExplore } from "react-icons/md";
 import { apiCreatePostService } from '../../services/postService';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-const PostCreateModal = ({ setCreateSuccess }) => {
-  const { avatar, firstName, lastName } = useSelector(state => state.auth);
+const PostCreateModal = ({ setCreateSuccess, location }) => {
+  const { userId, avatar, firstName, lastName } = useSelector(state => state.auth);
 
   const [postContent, setPostContent] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -16,6 +17,8 @@ const PostCreateModal = ({ setCreateSuccess }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
+  const navigate = useNavigate()
+  
   // Tag states
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -46,7 +49,7 @@ const PostCreateModal = ({ setCreateSuccess }) => {
 
   const addTag = () => {
     const trimmedTag = tagInput.trim();
-    if (trimmedTag && !tags.includes(trimmedTag) && tags.length < 10) {
+    if (trimmedTag && !tags.includes(trimmedTag) && tags.length < 3) {
       setTags([...tags, trimmedTag]);
       setTagInput("");
     }
@@ -175,9 +178,13 @@ const PostCreateModal = ({ setCreateSuccess }) => {
 
       if (response.status === "SUCCESS") {
         // Reset form and close modal
-        handleClose();
-        setCreateSuccess(true);
-        toast.success('Post created successfully!');
+        if (location === "home") {
+          navigate(`/user/${userId}`)
+        } else {
+          handleClose();
+          setCreateSuccess(true);
+          toast.success('Post created successfully!');
+        }
       } else {
         throw new Error('Failed to create post');
       }
@@ -197,7 +204,7 @@ const PostCreateModal = ({ setCreateSuccess }) => {
     <>
       {/* Button trigger */}
       <div
-        className="flex items-center gap-3 p-4 mb-6 transition-colors bg-white shadow cursor-pointer rounded-xl hover:bg-gray-50"
+        className="flex items-center gap-3 p-4 mb-6 transition-colors bg-white shadow cursor-pointer w rounded-xl hover:bg-gray-50 w-[620px]"
         onClick={handleOpen}
       >
         <img
@@ -357,7 +364,7 @@ const PostCreateModal = ({ setCreateSuccess }) => {
 
                     {/* Tag limit indicator inside popup */}
                     <div className="mb-2 text-xs text-gray-500">
-                      {tags.length}/10 tags
+                      {tags.length}/3 tags
                     </div>
 
                     <div className="text-xs text-gray-400">
@@ -516,7 +523,7 @@ const PostCreateModal = ({ setCreateSuccess }) => {
                 disabled={(!postContent.trim() && selectedMedia.length === 0 && !selectedLocation) || isUploading}
                 aria-label="Post"
               >
-                {isUploading ? 'Posting...' : 'Post'}
+                {isUploading ? (<LoadingSpinner size={19} />) : 'Post'}
               </button>
             </div>
           </div>

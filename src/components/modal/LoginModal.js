@@ -39,16 +39,10 @@ const LoginModal = ({ modalType, onSwitchToSignUp }) => {
         password: password.trim()
       }));
       console.log("Login response:", res);
-      if (res.status === "SUCCESS") {
-        toast.success("Login successful!");
-        setTimeout(() => {
-          navigate("/");
-        }, 700);
-      } else {
-        toast.error(res.message);
-        console.log("Login failed:", res.data);
+      if (res?.status !== "SUCCESS") {
+        toast.error(res?.message);
+        console.log("Login failed:", res?.data);
       }
-      // TODO: dispatch login thành công vào redux nếu cần
     } catch (err) {
       toast.error(err?.message || "Some time is wrong. Please try again");
       console.log("Login error:", err);
