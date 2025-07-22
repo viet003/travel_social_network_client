@@ -94,12 +94,12 @@ const UserPage = () => {
     }
   };
 
-  // // Tải hồ sơ người dùng khi userId thay đổi
-  // useEffect(() => {
-  //   console.log("userId", userId);
-  //   if (!userId) return;
-  //   fetchUserData();
-  // }, [userId]);
+  // Tải hồ sơ người dùng khi userId thay đổi
+  useEffect(() => {
+    console.log("userId", userId);
+    if (!userId) return;
+    fetchUserData();
+  }, [userId]);
 
   // Tải bài viết khi page hoặc userId thay đổi
   useEffect(() => {

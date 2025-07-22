@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdOutlineExplore } from "react-icons/md";
-import { LocationDropdown} from "../../components";
+import { LocationDropdown} from "../../../components";
 
 
 const GENDER_OPTIONS = [

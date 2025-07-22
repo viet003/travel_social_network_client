@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { X, Users, Image, Smile, MapPin, MoreHorizontal, Edit, Camera, Hash, Plus } from "lucide-react";
-import { LoadingSpinner, LocationDropdown } from "../../components";
-import avatardf from '../../assets/images/avatardf.jpg'
+import { LoadingSpinner, LocationDropdown } from "../..";
+import avatardf from '../../../assets/images/avatardf.jpg'
 import { MdOutlineExplore } from "react-icons/md";
-import { apiCreatePostService } from '../../services/postService';
+import { apiCreatePostService } from '../../../services/postService';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 

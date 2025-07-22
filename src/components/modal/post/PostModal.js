@@ -7,8 +7,8 @@ import { HiOutlineEmojiHappy } from "react-icons/hi";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import PostDetailModal from './PostDetailModal';
 import { useSelector } from 'react-redux';
-import avatardf from '../../assets/images/avatardf.jpg';
-import * as helperFunction from "../../utilities/helperFunction"
+import avatardf from '../../../assets/images/avatardf.jpg';
+import * as helperFunction from "../../../utilities/helperFunction"
 import { useNavigate } from 'react-router-dom';
 
 const PostModal = ({

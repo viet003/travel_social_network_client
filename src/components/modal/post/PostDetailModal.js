@@ -5,9 +5,9 @@ import { SlActionRedo } from "react-icons/sl";
 import { SlBubble } from "react-icons/sl";
 import { SlHeart } from "react-icons/sl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import CommentCreateModal from './CommentCreateModal';
-import { formatTimeAgo } from '../../utilities/helperFunction';
-import { apiGetAllCommentsByPost } from '../../services/commentService';
+import CommentCreateModal from '../comment/CommentCreateModal';
+import { formatTimeAgo } from '../../../utilities/helperFunction';
+import { apiGetAllCommentsByPost } from '../../../services/commentService';
 import { FaHeart } from 'react-icons/fa6';
 
 const PostDetailModal = ({

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { BiHomeHeart } from "react-icons/bi";
 import { MdOutlineExplore } from "react-icons/md";
 import { PiStripeLogo } from "react-icons/pi";
-import { CiSaveDown1 } from "react-icons/ci";
+import { MdGroups } from "react-icons/md";
 import { TiMessages } from "react-icons/ti";
 import { CgProfile } from "react-icons/cg";
 import { IoMdClose } from "react-icons/io";
@@ -10,20 +10,20 @@ import { Link } from 'react-router-dom';
 import { pathDomain } from './../../utilities/pathDomain';
 import { useDispatch, useSelector } from 'react-redux';
 import actionTypes from '../../stores/types/actionTypes';
-import { stateAction } from '../../stores/actions';
+import { tabAction } from '../../stores/actions';
 
 const SidebarLeft = () => {
 
     const { userId } = useSelector(state => state.auth)
-    const { tabActive } = useSelector(state => state.sidebar_tab_active)
+    const { tab_active } = useSelector(state => state.tab_active)
     const dispatch = useDispatch();
-    
+
     // State for search dropdown
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleTabClick = (tabType) => {
-        dispatch(stateAction.changeState(tabType));
+        dispatch(tabAction.tabAction(tabType));
     };
 
     // Mock recent searches data
@@ -80,7 +80,7 @@ const SidebarLeft = () => {
                             <div className="p-3 border-b border-gray-100">
                                 <div className="flex items-center justify-between">
                                     <h4 className="text-sm font-medium text-blue-800">Recent</h4>
-                                    <button 
+                                    <button
                                         onClick={() => setIsSearchFocused(false)}
                                         className="text-gray-400 hover:text-gray-600"
                                     >
@@ -93,14 +93,14 @@ const SidebarLeft = () => {
                                     <div key={item.id} className="flex items-center px-3 py-2 cursor-pointer hover:bg-gray-50 group">
                                         <div className="flex-shrink-0 mr-3">
                                             {item.type === 'person' ? (
-                                                <img 
-                                                    src={item.avatar} 
+                                                <img
+                                                    src={item.avatar}
                                                     alt={item.name}
                                                     className="object-cover w-8 h-8 rounded-full"
                                                 />
                                             ) : (
-                                                <img 
-                                                    src={item.image} 
+                                                <img
+                                                    src={item.image}
                                                     alt={item.name}
                                                     className="object-cover w-8 h-8 rounded-md"
                                                 />
@@ -131,7 +131,7 @@ const SidebarLeft = () => {
 
                     {/* Overlay to close dropdown when clicking outside */}
                     {isSearchFocused && (
-                        <div 
+                        <div
                             className="fixed inset-0 z-40"
                             onClick={() => setIsSearchFocused(false)}
                         />
@@ -142,7 +142,7 @@ const SidebarLeft = () => {
                 <nav className="flex flex-col gap-2 mb-8">
                     <Link
                         to={pathDomain.HOME}
-                        className={`${tabActive === actionTypes.HOME_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg    hover:bg-gray-100`}
+                        className={`${tab_active === actionTypes.HOME_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg    hover:bg-gray-100`}
                         onClick={() => handleTabClick(actionTypes.HOME_ACTIVE)}
                     >
                         <BiHomeHeart className="w-5 h-5" />
@@ -151,7 +151,7 @@ const SidebarLeft = () => {
 
                     <Link
                         to={pathDomain.EXPLORE}
-                        className={`${tabActive === actionTypes.EXPLORE_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg     hover:bg-gray-100`}
+                        className={`${tab_active === actionTypes.EXPLORE_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg     hover:bg-gray-100`}
                         onClick={() => handleTabClick(actionTypes.EXPLORE_ACTIVE)}
                     >
                         <MdOutlineExplore className="w-5 h-5" />
@@ -160,7 +160,7 @@ const SidebarLeft = () => {
 
                     <Link
                         to={pathDomain.MY_TRIPS}
-                        className={`${tabActive === actionTypes.MYTRIPS_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg     hover:bg-gray-100`}
+                        className={`${tab_active === actionTypes.MYTRIPS_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg     hover:bg-gray-100`}
                         onClick={() => handleTabClick(actionTypes.MYTRIPS_ACTIVE)}
                     >
                         <PiStripeLogo className="w-5 h-5" />
@@ -168,17 +168,17 @@ const SidebarLeft = () => {
                     </Link>
 
                     <Link
-                        to={pathDomain.SAVED_PLACES}
-                        className={`${tabActive === actionTypes.SAVEPLACE_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg   hover:bg-gray-100`}
-                        onClick={() => handleTabClick(actionTypes.SAVEPLACE_ACTIVE)}
+                        to={pathDomain.GROUP}
+                        className={`${tab_active === actionTypes.GROUP_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg   hover:bg-gray-100`}
+                        onClick={() => handleTabClick(actionTypes.GROUP_ACTIVE)}
                     >
-                        <CiSaveDown1 className="w-5 h-5" />
-                        Saved Places
+                        <MdGroups className='w-5 h-5' />
+                        Group
                     </Link>
 
                     <Link
                         to={pathDomain.MESSAGES}
-                        className={`${tabActive === actionTypes.MESSAGE_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg     hover:bg-gray-100`}
+                        className={`${tab_active === actionTypes.MESSAGE_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg     hover:bg-gray-100`}
                         onClick={() => handleTabClick(actionTypes.MESSAGE_ACTIVE)}
                     >
                         <TiMessages className="w-5 h-5" />
@@ -187,7 +187,7 @@ const SidebarLeft = () => {
 
                     <Link
                         to={`user/${userId}`}
-                        className={`${tabActive === actionTypes.PROFILE_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg     hover:bg-gray-100`}
+                        className={`${tab_active === actionTypes.PROFILE_ACTIVE ? "text-blue-600 bg-blue-50 font-medium" : "text-gray-700 bg-white"} flex items-center gap-3 px-3 py-2 rounded-lg     hover:bg-gray-100`}
                         onClick={() => handleTabClick(actionTypes.PROFILE_ACTIVE)}
                     >
                         <CgProfile className="w-5 h-5" />

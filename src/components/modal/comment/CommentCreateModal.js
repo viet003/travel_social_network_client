@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { HiOutlineEmojiHappy } from 'react-icons/hi';
 import { toast } from 'react-toastify';
-import { apiCreateCommentService } from '../../services/commentService';
-import avatardf from "../../assets/images/avatardf.jpg"
-import LoadingSpinner from '../component/LoadingSpinner';
+import { apiCreateCommentService } from '../../../services/commentService';
+import avatardf from "../../../assets/images/avatardf.jpg"
+import LoadingSpinner from '../../component/LoadingSpinner';
 
 const CommentCreateModal = ({
     postId,

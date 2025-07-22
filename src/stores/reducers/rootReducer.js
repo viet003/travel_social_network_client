@@ -1,5 +1,5 @@
-import authReducer from "./authReducer";
-import stateReducer from "./stateReducer";
+import authReducer from './authReducer';
+import tabActiveReducer from "./tabReducer";
 import { combineReducers } from "redux"
 import storage from "redux-persist/lib/storage"
 import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2"
@@ -17,15 +17,15 @@ const authConfig = {
     whiteList: ['isLoggedIn', 'token']
 }
 
-const stateConfig = {
+const tabConfig = {
     ...commonConfig,
-    key: 'state',
+    key: 'tab_active',
     whiteList: ['active']
 }
 
 const rootReducer = combineReducers({
     auth: persistReducer(authConfig, authReducer),
-    sidebar_tab_active: persistReducer(stateConfig, stateReducer)
+    tab_active: persistReducer(tabConfig, tabActiveReducer)
 })
 
 

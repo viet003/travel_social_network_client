@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { MdOutlineExplore } from "react-icons/md";
-import { apiSignupService } from '../../services/authService';
+import { apiSignupService } from '../../../services/authService';
 import { toast } from 'react-toastify';
-import { LoadingSpinner } from '..';
+import { LoadingSpinner } from '../..';
 
 const SignUpModal = ({ modalType, onSwitchToLogin }) => {
   const [form, setForm] = useState({

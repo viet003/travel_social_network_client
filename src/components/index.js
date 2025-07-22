@@ -4,9 +4,9 @@ export { default as ProtectedRoute } from './component/ProtectedRoute';
 export { default as LoadingSpinner } from './component/LoadingSpinner';
 export { default as LocationDropdown } from './component/LocationDropdown';
 export { default as Modal } from './Modal';
-export { default as LoginModal } from './modal/LoginModal';
-export { default as SignUpModal } from './modal/SignUpModal';
-export { default as PostModal } from './modal/PostModal';
-export { default as EditProfileModal } from './modal/EditProfileModal';
-export { default as PostCreateModal } from './modal/PostCreateModal';
-export { default as CommentCreateModal } from './modal/CommentCreateModal'
+export { default as LoginModal } from './modal/auth/LoginModal';
+export { default as SignUpModal } from './modal/auth/SignUpModal';
+export { default as PostModal } from './modal/post/PostModal';
+export { default as EditProfileModal } from './modal/user/EditProfileModal';
+export { default as PostCreateModal } from './modal/post/PostCreateModal';
+export { default as CommentCreateModal } from './modal/comment/CommentCreateModal'

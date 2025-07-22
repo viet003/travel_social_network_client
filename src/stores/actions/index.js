@@ -1,2 +1,2 @@
 export * as authAction from "./authAction"
-export * as stateAction from "./stateAction"
+export * as tabAction from "./tabAction"

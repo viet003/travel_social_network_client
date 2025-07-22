@@ -2,7 +2,7 @@ import React from 'react'
 import { IoIosLogOut } from "react-icons/io";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { useDispatch, useSelector } from 'react-redux';
-import { authAction, stateAction } from '../../stores/actions';
+import { authAction, tabAction } from '../../stores/actions';
 import { useNavigate } from 'react-router-dom';
 import avatardf from '../../assets/images/avatardf.jpg'
 import actionTypes from '../../stores/types/actionTypes';
@@ -23,7 +23,7 @@ const SidebarRight = () => {
                         <button className="flex-1 text-left"
                             onClick={() => {
                                 navigate(`/user/${userId}`);
-                                dispatch(stateAction.changeState(actionTypes.PROFILE_ACTIVE));
+                                dispatch(tabAction.tabAction(actionTypes.PROFILE_ACTIVE));
                             }}
                         >
                             <div className="font-semibold text-gray-800 text-md">Hi, {lastName} </div>
@@ -38,7 +38,7 @@ const SidebarRight = () => {
                         <button className="p-2 text-gray-400 hover:text-red-500" title="Logout"
                             onClick={() => {
                                 dispatch(authAction.logout());
-                                dispatch(stateAction.changeState(actionTypes.HOME_ACTIVE));
+                                dispatch(tabAction.tabAction(actionTypes.HOME_ACTIVE));
                             }}
 
                         >

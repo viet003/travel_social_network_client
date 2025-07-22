@@ -3,9 +3,9 @@ import { MdOutlineExplore } from "react-icons/md";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import { authAction } from '../../stores/actions';
+import { authAction } from '../../../stores/actions';
 import { useDispatch } from 'react-redux';
-import { LoadingSpinner } from '..';
+import { LoadingSpinner } from '../..';
 
 
 const LoginModal = ({ modalType, onSwitchToSignUp }) => {
