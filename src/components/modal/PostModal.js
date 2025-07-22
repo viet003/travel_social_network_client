@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { SlActionRedo } from "react-icons/sl";
-import { SlBubble } from "react-icons/sl";
-import { SlHeart } from "react-icons/sl";
+import { SlBubble, SlHeart } from "react-icons/sl";
+import { FaHeart } from "react-icons/fa6";
 import { IoEarth } from "react-icons/io5";
 import { HiOutlineEmojiHappy } from "react-icons/hi";
-import { FaPlay } from "react-icons/fa";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import PostDetailModal from './PostDetailModal';
 import { useSelector } from 'react-redux';
@@ -39,9 +38,12 @@ const PostModal = ({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [isLiked, setIsLiked] = useState(liked);
-  const [currentLikeCount, setCurrentLikeCount] = useState(likeCount);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { avatar: currentUserAvatar } = useSelector(state => state.auth);
+  const [postLikeCount, setPostLikeCount] = useState(likeCount);
+  const [postCommentCount, setPostCommentCount] = useState(commentCount);
+  const [postShareCount, setPostShareCount] = useState(shareCount);
+
 
   const navigate = useNavigate()
 
@@ -74,10 +76,14 @@ const PostModal = ({
 
   const handleLike = () => {
     setIsLiked(!isLiked);
-    setCurrentLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+    setPostLikeCount(prev => isLiked ? prev - 1 : prev + 1);
     if (onLike) {
       onLike(!isLiked);
     }
+  };
+
+  const handleComment = () => {
+    setPostCommentCount(prev => prev + 1);
   };
 
   const openCommentModal = () => {
@@ -189,12 +195,12 @@ const PostModal = ({
 
         <div className="flex items-center gap-3 mb-2">
           <img src={avatar} alt="avatar" className="object-cover w-10 h-10 rounded-full cursor-pointer"
-            onClick={() => {console.log(userId); navigate(`/user/${userId}`)}}
+            onClick={() => { console.log(userId); navigate(`/user/${userId}`) }}
           />
           <div className='flex flex-col'>
             <div className="flex items-center gap-2">
               <span className="font-semibold text-gray-800 cursor-pointer hover:underline hover:text-blue-600"
-                onClick={() => {navigate(`/user/${userId}`)}}
+                onClick={() => { navigate(`/user/${userId}`) }}
               >{userName}</span>
               {location && <span className="text-xs text-gray-500">• {location}</span>}
             </div>
@@ -234,16 +240,16 @@ const PostModal = ({
             </svg>
           </div>
           <div className={`flex items-center gap-1 cursor-pointer transition-colors ${isLiked ? 'text-red-500' : 'hover:text-red-500'}`} onClick={handleLike}>
-            <SlHeart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
-            {currentLikeCount}
+            {isLiked ? <FaHeart className='w-5 h-5 fill-current' /> : <SlHeart className='w-5 h-5' />}
+            {postLikeCount}
           </div>
-          <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-blue-500" onClick={openCommentModal}>
+          <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-red-500" onClick={openCommentModal}>
             <SlBubble className="w-5 h-5" />
-            {commentCount}
+            {postCommentCount}
           </div>
-          <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-green-500" onClick={onShare}>
+          <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-red-500" onClick={onShare}>
             <SlActionRedo className="w-5 h-5" />
-            {shareCount}
+            {postShareCount}
           </div>
         </div>
 
@@ -289,8 +295,12 @@ const PostModal = ({
         displayVideo={displayVideo}
         selectedImageIndex={selectedImageIndex}
         comments={comments}
+        postLikeCount={postLikeCount}
+        handleLike={handleLike}
+        isLiked={isLiked}
+        postCommentCount={postCommentCount}
+        handleComment={handleComment}
         currentUserAvatar={currentUserAvatar}
-        onCommentSubmit={handleCommentSubmit}
         tags={tags}
         isShare={isShare}
         status={status}

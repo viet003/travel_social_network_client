@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { IoEarth } from "react-icons/io5";
-import { HiOutlineEmojiHappy } from "react-icons/hi";
 import { AiOutlineClose } from "react-icons/ai";
 import { SlActionRedo } from "react-icons/sl";
 import { SlBubble } from "react-icons/sl";
 import { SlHeart } from "react-icons/sl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import avatardf from "../../assets/images/avatardf.jpg"
+import CommentCreateModal from './CommentCreateModal';
+import { formatTimeAgo } from '../../utilities/helperFunction';
+import { apiGetAllCommentsByPost } from '../../services/commentService';
+import { FaHeart } from 'react-icons/fa6';
 
 const PostDetailModal = ({
   isOpen,
@@ -20,23 +22,77 @@ const PostDetailModal = ({
   displayImages = [],
   displayVideo,
   selectedImageIndex,
-  comments = [],
   currentUserAvatar,
-  onCommentSubmit,
   tags = [],
   isShare = false,
   status,
-  likeCount = 0,
-  commentCount = 0,
-  shareCount = 0,
-  onLike,
+  postLikeCount = 0,
+  handleLike,
+  isLiked,
+  postCommentCount,
+  handleComment,
+  postShareCount = 0,
   onShare,
-  liked = false
 }) => {
-  const [commentText, setCommentText] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(selectedImageIndex || 0);
-  const [isLiked, setIsLiked] = useState(liked);
-  const [currentLikeCount, setCurrentLikeCount] = useState(likeCount);
+  const [newComment, setNewComment] = useState(null)
+  const [comments, setComments] = useState([])
+  const [page, setPage] = useState(0); // Trạng thái để theo dõi số trang
+  const [hasMore, setHasMore] = useState(true); // Kiểm tra còn bài viết để tải
+  const [loading, setLoading] = useState(false);
+  const observer = useRef(); // Lưu trữ Intersection Observer
+
+
+  // Hàm callback để theo dõi bài viết cuối cùng
+  const lastCommentElementRef = useCallback(
+    (node) => {
+      if (loading || !hasMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasMore) {
+            setPage((prevPage) => prevPage + 1);
+          }
+        },
+        { rootMargin: '100px' } // Tải sớm hơn khi cách mép 100px
+      );
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
+
+  // Hàm tải bài viết của người dùng, hỗ trợ phân trang
+  const fetchPostComments = async (pageNum) => {
+    setLoading(true);
+    try {
+      const commetResponse = await apiGetAllCommentsByPost(postId, pageNum);
+      console.log("User comments data:", commetResponse);
+      const comments = commetResponse?.data?.content || [];
+      if (pageNum === 0) {
+        setComments(comments);
+      } else {
+        setComments((prevPosts) => [...prevPosts, ...comments]);
+      }
+      setHasMore(comments.length > 0);
+    } catch (err) {
+      console.error("Error fetching user posts:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Tải bài viết khi page hoặc userId thay đổi
+  useEffect(() => {
+    if (!isOpen || !hasMore) return;
+    fetchPostComments(page);
+  }, [page, isOpen]);
+
+  useEffect(() => {
+    if (newComment) {
+      setComments(prev => [newComment, ...prev]);
+    }
+  }, [newComment]);
+
 
   const handleImageClick = (index) => {
     setCurrentImageIndex(index);
@@ -52,29 +108,6 @@ const PostDetailModal = ({
     setCurrentImageIndex((prev) =>
       prev === displayImages.length - 1 ? 0 : prev + 1
     );
-  };
-
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
-    if (commentText.trim() && onCommentSubmit) {
-      onCommentSubmit(commentText.trim());
-      setCommentText('');
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleCommentSubmit(e);
-    }
-  };
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setCurrentLikeCount(prev => isLiked ? prev - 1 : prev + 1);
-    if (onLike) {
-      onLike(!isLiked);
-    }
   };
 
   const renderVideo = (videoUrl) => (
@@ -161,8 +194,8 @@ const PostDetailModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed z-50 flex items-center justify-center h-full p-4 bg-black bg-opacity-50 -inset-6">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden">
+    <div className="fixed z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 h-[vh] -inset-6">
+      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[99vh] overflow-hidden relative">
         {/* Modal Header */}
         <div className="relative flex items-center justify-center p-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold">Post by {userName}</h2>
@@ -218,73 +251,66 @@ const PostDetailModal = ({
                 </svg>
               </div>
               <div className={`flex items-center gap-1 cursor-pointer transition-colors ${isLiked ? 'text-red-500' : 'hover:text-red-500'}`} onClick={handleLike}>
-                <SlHeart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
-                {currentLikeCount}
+                {isLiked ? <FaHeart className='w-5 h-5 fill-current' /> : <SlHeart className='w-5 h-5' />}
+                {postLikeCount}
               </div>
               <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-blue-500">
                 <SlBubble className="w-5 h-5" />
-                {commentCount}
+                {postCommentCount}
               </div>
               <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-green-500" onClick={onShare}>
                 <SlActionRedo className="w-5 h-5" />
-                {shareCount}
+                {postShareCount}
               </div>
             </div>
           </div>
-          
-          
+
+
           {/* Comments List */}
           <div className="p-4 space-y-3">
-            {comments.map((ucomment, idx) => (
-              <div key={idx} className="flex w-full max-w-lg gap-3">
-                <img src={ucomment.avatar} alt="avatar" className="flex-shrink-0 object-cover w-8 h-8 mt-3 rounded-full" />
-                <div className="flex-1">
-                  <div className="px-3 py-2 bg-gray-100 rounded-2xl">
-                    <span className="text-sm font-semibold text-gray-800">{ucomment.userName}</span>
-                    <p className="mt-1 text-sm text-gray-700">{ucomment.text}</p>
+            {comments.map((ucomment, idx) => {
+              if (comments.length === idx + 1) {
+                return (
+                  <div ref={lastCommentElementRef} key={idx} className="flex w-full max-w-lg gap-3">
+                    <img src={ucomment?.avatarImg} alt="avatar" className="flex-shrink-0 object-cover w-8 h-8 mt-3 rounded-full" />
+                    <div className="flex-1">
+                      <div className="px-3 py-2 bg-gray-100 rounded-2xl">
+                        <span className="text-sm font-semibold text-gray-800">{ucomment?.firstName} {ucomment?.lastName}</span>
+                        <p className="mt-1 text-sm text-gray-700">{ucomment?.content}</p>
+                      </div>
+                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                        <span className="transition-colors cursor-pointer hover:text-blue-500">Like</span>
+                        <span className="transition-colors cursor-pointer hover:text-blue-500">Reply</span>
+                        <span>{formatTimeAgo(ucomment?.createdAt) || '2 hours ago'}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
-                    <span className="transition-colors cursor-pointer hover:text-blue-500">Like</span>
-                    <span className="transition-colors cursor-pointer hover:text-blue-500">Reply</span>
-                    <span>{ucomment.timeAgo || '2 hours ago'}</span>
+                )
+              } else {
+                return (
+                  <div key={idx} className="flex w-full max-w-lg gap-3">
+                    <img src={ucomment?.avatarImg} alt="avatar" className="flex-shrink-0 object-cover w-8 h-8 mt-3 rounded-full" />
+                    <div className="flex-1">
+                      <div className="px-3 py-2 bg-gray-100 rounded-2xl">
+                        <span className="text-sm font-semibold text-gray-800">{ucomment?.firstName} {ucomment?.lastName}</span>
+                        <p className="mt-1 text-sm text-gray-700">{ucomment?.content}</p>
+                      </div>
+                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                        <span className="transition-colors cursor-pointer hover:text-blue-500">Like</span>
+                        <span className="transition-colors cursor-pointer hover:text-blue-500">Reply</span>
+                        <span>{formatTimeAgo(ucomment?.createdAt) || '2 hours ago'}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                )
+              }
+            })}
           </div>
-        </div>
-        
-        {/* Comment Input */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3">
-            <img
-              src={currentUserAvatar || avatardf}
-              alt="current user"
-              className="flex-shrink-0 object-cover w-8 h-8 rounded-full"
-            />
-            <div className="relative flex-1">
-              <input
-                type="text"
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Write a comment..."
-                className="w-full px-4 py-2 transition-all bg-gray-100 border-none rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                type="button"
-                className="absolute text-gray-400 transition-colors transform -translate-y-1/2 right-2 top-1/2 hover:text-gray-600"
-              >
-                <HiOutlineEmojiHappy className="w-5 h-5" />
-              </button>
-            </div>
-            <button
-              onClick={handleCommentSubmit}
-              disabled={!commentText.trim()}
-              className="px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-500 rounded-full hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-            >
-              Send
-            </button>
+
+          <div className='h-[70px]'></div>
+          {/* Comment Input */}
+          <div className='absolute bottom-0 left-0 w-full bg-white'>
+            <CommentCreateModal postId={postId} handleComment={handleComment} setNewComment={setNewComment} currentUserAvatar={currentUserAvatar} loading={loading} setLoading={setLoading} />
           </div>
         </div>
       </div>

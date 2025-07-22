@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import avatardf from "../../assets/images/avatardf.jpg";
 import LoadingPage from '../component/LoadingPage';
 import { LoadingSpinner } from "../../components";
+import { Camera } from 'lucide-react';
 
 const HomePage = () => {
   const [posts, setPosts] = useState([]);
@@ -69,7 +70,7 @@ const HomePage = () => {
   return (
     <>
       {/* Create Post */}
-      <PostCreateModal location="home"/>
+      <PostCreateModal location="home" />
 
       {loading && page === 0 && <LoadingPage />}
 
@@ -82,74 +83,80 @@ const HomePage = () => {
         </div>
         <div className="text-sm font-medium text-gray-500">Most Recent</div>
       </div>
-
-      {posts.map((post, index) => {
-        if (posts.length === index + 1) {
+      {
+        posts.length === 0 && !loading ? (
+          <div className="py-12 text-center">
+            <Camera size={48} className="mx-auto mb-4 text-gray-400" />
+            <p className="text-gray-500">No posts yet</p>
+          </div>
+        ) : (posts.map((post, index) => {
+          if (posts.length === index + 1) {
+            return (
+              <div key={post.postId} ref={lastPostElementRef}>
+                <PostModal
+                  userId={post?.userId}
+                  postId={post.postId}
+                  avatar={post.avatarImg || avatardf}
+                  userName={`${post.firstName || ''} ${post.lastName || ''}`.trim() || 'Unknown User'}
+                  location={post.location}
+                  timeAgo={post.createdAt}
+                  content={post.content}
+                  image={post.mediaList?.find(media => media.type === 'IMAGE')?.url || null}
+                  video={post.mediaList?.find(media => media.type === 'VIDEO')?.url || null}
+                  mediaList={post.mediaList || []}
+                  likeCount={post.likeCount || 0}
+                  commentCount={post.commentCount || 0}
+                  shareCount={post.shareCount || 0}
+                  tags={post.tags || []}
+                  isShare={post.isShare}
+                  status={post.status}
+                  comments={[]}
+                  onShare={() => {
+                    console.log('Share post:', post.postId);
+                  }}
+                  onLike={() => {
+                    console.log('Like post:', post.postId);
+                  }}
+                  onComment={() => {
+                    console.log('Comment on post:', post.postId);
+                  }}
+                />
+              </div>
+            );
+          }
           return (
-            <div key={post.postId} ref={lastPostElementRef}>
-              <PostModal
-                userId={post?.userId}
-                postId={post.postId}
-                avatar={post.avatarImg || avatardf}
-                userName={`${post.firstName || ''} ${post.lastName || ''}`.trim() || 'Unknown User'}
-                location={post.location}
-                timeAgo={post.createdAt}
-                content={post.content}
-                image={post.mediaList?.find(media => media.type === 'IMAGE')?.url || null}
-                video={post.mediaList?.find(media => media.type === 'VIDEO')?.url || null}
-                mediaList={post.mediaList || []}
-                likeCount={post.likeCount || 0}
-                commentCount={post.commentCount || 0}
-                shareCount={post.shareCount || 0}
-                tags={post.tags || []}
-                isShare={post.isShare}
-                status={post.status}
-                comments={[]}
-                onShare={() => {
-                  console.log('Share post:', post.postId);
-                }}
-                onLike={() => {
-                  console.log('Like post:', post.postId);
-                }}
-                onComment={() => {
-                  console.log('Comment on post:', post.postId);
-                }}
-              />
-            </div>
+            <PostModal
+              key={post.postId}
+              userId={post?.userId}
+              postId={post.postId}
+              avatar={post.avatarImg || avatardf}
+              userName={`${post.firstName || ''} ${post.lastName || ''}`.trim() || 'Unknown User'}
+              location={post.location}
+              timeAgo={post.createdAt}
+              content={post.content}
+              image={post.mediaList?.find(media => media.type === 'IMAGE')?.url || null}
+              video={post.mediaList?.find(media => media.type === 'VIDEO')?.url || null}
+              mediaList={post.mediaList || []}
+              likeCount={post.likeCount || 0}
+              commentCount={post.commentCount || 0}
+              shareCount={post.shareCount || 0}
+              tags={post.tags || []}
+              isShare={post.isShare}
+              status={post.status}
+              comments={[]}
+              onShare={() => {
+                console.log('Share post:', post.postId);
+              }}
+              onLike={() => {
+                console.log('Like post:', post.postId);
+              }}
+              onComment={() => {
+                console.log('Comment on post:', post.postId);
+              }}
+            />
           );
-        }
-        return (
-          <PostModal
-            key={post.postId}
-            userId={post?.userId}
-            postId={post.postId}
-            avatar={post.avatarImg || avatardf}
-            userName={`${post.firstName || ''} ${post.lastName || ''}`.trim() || 'Unknown User'}
-            location={post.location}
-            timeAgo={post.createdAt}
-            content={post.content}
-            image={post.mediaList?.find(media => media.type === 'IMAGE')?.url || null}
-            video={post.mediaList?.find(media => media.type === 'VIDEO')?.url || null}
-            mediaList={post.mediaList || []}
-            likeCount={post.likeCount || 0}
-            commentCount={post.commentCount || 0}
-            shareCount={post.shareCount || 0}
-            tags={post.tags || []}
-            isShare={post.isShare}
-            status={post.status}
-            comments={[]}
-            onShare={() => {
-              console.log('Share post:', post.postId);
-            }}
-            onLike={() => {
-              console.log('Like post:', post.postId);
-            }}
-            onComment={() => {
-              console.log('Comment on post:', post.postId);
-            }}
-          />
-        );
-      })}
+        }))
+      }
 
       {loading && page > 0 && (
         <div className="flex items-center justify-center w-full">

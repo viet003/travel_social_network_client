@@ -9,4 +9,4 @@ export { default as SignUpModal } from './modal/SignUpModal';
 export { default as PostModal } from './modal/PostModal';
 export { default as EditProfileModal } from './modal/EditProfileModal';
 export { default as PostCreateModal } from './modal/PostCreateModal';
-
+export { default as CommentCreateModal } from './modal/CommentCreateModal'
