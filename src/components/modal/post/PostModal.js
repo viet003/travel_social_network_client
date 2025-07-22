@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { SlActionRedo } from "react-icons/sl";
 import { SlBubble, SlHeart } from "react-icons/sl";
 import { FaHeart } from "react-icons/fa6";

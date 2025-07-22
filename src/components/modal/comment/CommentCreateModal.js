@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { HiOutlineEmojiHappy } from 'react-icons/hi';
 import { toast } from 'react-toastify';
 import { apiCreateCommentService } from '../../../services/commentService';

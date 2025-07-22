@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdOutlineExplore } from 'react-icons/md';
 import { LoginModal, SignUpModal, Modal } from "../../components";

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { searchCities, getPopularCities, formatCityData } from '../../services/geoService';
 import { IoLocationOutline } from 'react-icons/io5';
 

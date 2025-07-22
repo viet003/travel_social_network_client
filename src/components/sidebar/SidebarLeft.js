@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { BiHomeHeart } from "react-icons/bi";
 import { MdOutlineExplore } from "react-icons/md";
 import { PiStripeLogo } from "react-icons/pi";

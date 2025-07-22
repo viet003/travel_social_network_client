@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
 import { SidebarLeft, SidebarRight } from '../../components';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { pathDomain } from '../../utilities/pathDomain';
 import { useSelector } from 'react-redux';
 
 const MainPage = () => {

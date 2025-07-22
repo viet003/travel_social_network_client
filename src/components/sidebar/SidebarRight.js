@@ -1,4 +1,3 @@
-import React from 'react'
 import { IoIosLogOut } from "react-icons/io";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { useDispatch, useSelector } from 'react-redux';

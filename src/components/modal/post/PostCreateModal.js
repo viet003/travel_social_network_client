@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { X, Users, Image, Smile, MapPin, MoreHorizontal, Edit, Camera, Hash, Plus } from "lucide-react";
 import { LoadingSpinner, LocationDropdown } from "../..";

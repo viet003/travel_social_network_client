@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MdOutlineExplore } from "react-icons/md";
 import { apiSignupService } from '../../../services/authService';
 import { toast } from 'react-toastify';
