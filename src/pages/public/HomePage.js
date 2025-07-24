@@ -120,6 +120,7 @@ const HomePage = () => {
                   onComment={() => {
                     console.log('Comment on post:', post.postId);
                   }}
+                  liked={post?.liked}
                 />
               </div>
             );
@@ -153,6 +154,7 @@ const HomePage = () => {
               onComment={() => {
                 console.log('Comment on post:', post.postId);
               }}
+              liked={post?.liked}
             />
           );
         }))

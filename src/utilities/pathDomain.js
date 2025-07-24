@@ -7,5 +7,6 @@ export const pathDomain = {
     USER: "/user/:userId",
     GROUP: "/group",
     GROUP_DETAIL: "/group/:groupId",
+    SEARCH: "/search",
     STAR: "*"
 }

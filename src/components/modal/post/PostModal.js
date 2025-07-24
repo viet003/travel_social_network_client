@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SlActionRedo } from "react-icons/sl";
 import { SlBubble, SlHeart } from "react-icons/sl";
-import { FaHeart } from "react-icons/fa6";
 import { IoEarth } from "react-icons/io5";
 import { HiOutlineEmojiHappy } from "react-icons/hi";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,6 +9,7 @@ import { useSelector } from 'react-redux';
 import avatardf from '../../../assets/images/avatardf.jpg';
 import * as helperFunction from "../../../utilities/helperFunction"
 import { useNavigate } from 'react-router-dom';
+import LikeButton from '../../component/LikeButton';
 
 const PostModal = ({
   postId,
@@ -27,13 +27,12 @@ const PostModal = ({
   shareCount = 0,
   tags = [],
   isShare = false,
-  status,
+  privacy,
   comments = [],
   onShare,
   onImageClick,
   onComment,
-  onLike,
-  liked = false
+  liked
 }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showCommentModal, setShowCommentModal] = useState(false);
@@ -46,6 +45,10 @@ const PostModal = ({
 
 
   const navigate = useNavigate()
+
+  // useEffect(() => {
+  //   console.log(liked)
+  // }, {liked})
 
   // Process mediaList to separate images and videos
   const imageMedia = mediaList.filter(media => media.type === 'IMAGE');
@@ -74,14 +77,6 @@ const PostModal = ({
     );
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setPostLikeCount(prev => isLiked ? prev - 1 : prev + 1);
-    if (onLike) {
-      onLike(!isLiked);
-    }
-  };
-
   const handleComment = () => {
     setPostCommentCount(prev => prev + 1);
   };
@@ -92,12 +87,6 @@ const PostModal = ({
 
   const closeCommentModal = () => {
     setShowCommentModal(false);
-  };
-
-  const handleCommentSubmit = (commentText) => {
-    if (onComment) {
-      onComment(commentText);
-    }
   };
 
   const renderSingleImage = (img, index) => (
@@ -207,7 +196,7 @@ const PostModal = ({
             <span className="flex items-center gap-1 text-xs text-gray-400 align-item-center">
               {helperFunction.formatTimeAgo(timeAgo)}
               <IoEarth className="w-3 h-3" />
-              {status && <span className="ml-1 text-xs">• {status}</span>}
+              {privacy && <span className="ml-1 text-xs">• {privacy}</span>}
             </span>
           </div>
           <div className="ml-auto">
@@ -239,10 +228,7 @@ const PostModal = ({
               <path strokeLinecap="round" strokeLinejoin="round" d="M14 9l-2-2-2 2m0 6l2 2 2-2" />
             </svg>
           </div>
-          <div className={`flex items-center gap-1 cursor-pointer transition-colors ${isLiked ? 'text-red-500' : 'hover:text-red-500'}`} onClick={handleLike}>
-            {isLiked ? <FaHeart className='w-5 h-5 fill-current' /> : <SlHeart className='w-5 h-5' />}
-            {postLikeCount}
-          </div>
+          <LikeButton postId={postId} isLiked={isLiked} setIsLiked={setIsLiked} likeCount={postLikeCount} setLikeCount={setPostLikeCount} />
           <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-red-500" onClick={openCommentModal}>
             <SlBubble className="w-5 h-5" />
             {postCommentCount}
@@ -296,14 +282,15 @@ const PostModal = ({
         selectedImageIndex={selectedImageIndex}
         comments={comments}
         postLikeCount={postLikeCount}
-        handleLike={handleLike}
+        setPostLikeCount={setPostLikeCount}
         isLiked={isLiked}
+        setIsLiked={setIsLiked}
         postCommentCount={postCommentCount}
         handleComment={handleComment}
         currentUserAvatar={currentUserAvatar}
         tags={tags}
         isShare={isShare}
-        status={status}
+        privacy={privacy}
       />
     </>
   );

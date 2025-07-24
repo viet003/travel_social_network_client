@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import CommentCreateModal from '../comment/CommentCreateModal';
 import { formatTimeAgo } from '../../../utilities/helperFunction';
 import { apiGetAllCommentsByPost } from '../../../services/commentService';
-import { FaHeart } from 'react-icons/fa6';
+import LikeButton from '../../component/LikeButton';
 
 const PostDetailModal = ({
   isOpen,
@@ -25,10 +25,11 @@ const PostDetailModal = ({
   currentUserAvatar,
   tags = [],
   isShare = false,
-  status,
+  privacy,
   postLikeCount = 0,
-  handleLike,
+  setPostLikeCount,
   isLiked,
+  setIsLiked,
   postCommentCount,
   handleComment,
   postShareCount = 0,
@@ -227,7 +228,7 @@ const PostDetailModal = ({
                 <span className="flex items-center gap-1 text-xs text-gray-400">
                   {timeAgo}
                   <IoEarth className="w-3 h-3" />
-                  {status && <span className="ml-1 text-xs">• {status}</span>}
+                  {privacy && <span className="ml-1 text-xs">• {privacy}</span>}
                 </span>
               </div>
             </div>
@@ -250,10 +251,7 @@ const PostDetailModal = ({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14 9l-2-2-2 2m0 6l2 2 2-2" />
                 </svg>
               </div>
-              <div className={`flex items-center gap-1 cursor-pointer transition-colors ${isLiked ? 'text-red-500' : 'hover:text-red-500'}`} onClick={handleLike}>
-                {isLiked ? <FaHeart className='w-5 h-5 fill-current' /> : <SlHeart className='w-5 h-5' />}
-                {postLikeCount}
-              </div>
+              <LikeButton postId={postId} isLiked={isLiked} setIsLiked={setIsLiked} likeCount={postLikeCount} setLikeCount={setPostLikeCount} />
               <div className="flex items-center gap-1 transition-colors cursor-pointer hover:text-blue-500">
                 <SlBubble className="w-5 h-5" />
                 {postCommentCount}

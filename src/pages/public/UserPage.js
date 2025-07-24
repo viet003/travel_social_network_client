@@ -13,6 +13,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { PostModal, EditProfileModal, PostCreateModal } from '../../components';
+import { ImageUploadModal } from '../../components'; 
 import { apiGetUserProfile, apiUpdateUserImgService, apiUpdateUserService } from '../../services/userService';
 import { apiGeAllPostByUser } from '../../services/postService';
 import { useDispatch } from "react-redux";
@@ -20,7 +21,7 @@ import { authAction } from '../../stores/actions';
 import { useSelector } from "react-redux";
 import avatardf from '../../assets/images/avatardf.jpg';
 import { toast } from 'react-toastify';
-import { LoadingSpinner } from "../../components"; // Nhập LoadingSpinner để hiển thị khi tải thêm bài viết
+import { LoadingSpinner } from "../../components";
 
 const UserPage = () => {
   const { userId } = useParams();
@@ -28,16 +29,19 @@ const UserPage = () => {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0); // Trạng thái để theo dõi số trang
+  const [page, setPage] = useState(0);
   const [totalElements, setTotalElements] = useState(0)
-  const [hasMore, setHasMore] = useState(true); // Kiểm tra còn bài viết để tải
-  const inputAvatarRef = useRef();
-  const inputCoverRef = useRef();
+  const [hasMore, setHasMore] = useState(true);
   const { userId: currentUserId } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [openEditModal, setOpenEditModal] = useState(false);
   const [createSuccess, setCreateSuccess] = useState(false);
-  const observer = useRef(); // Lưu trữ Intersection Observer
+  const observer = useRef();
+
+  // States for image upload modals
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [showCoverModal, setShowCoverModal] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
 
   // Hàm callback để theo dõi bài viết cuối cùng
   const lastPostElementRef = useCallback(
@@ -50,7 +54,7 @@ const UserPage = () => {
             setPage((prevPage) => prevPage + 1);
           }
         },
-        { rootMargin: '100px' } // Tải sớm hơn khi cách mép 100px
+        { rootMargin: '100px' }
       );
       if (node) observer.current.observe(node);
     },
@@ -66,7 +70,7 @@ const UserPage = () => {
       setUser(userProfileResponse?.data);
     } catch (err) {
       console.error("Error fetching user data:", err);
-      toast.error("Lỗi khi tải dữ liệu người dùng!");
+      toast.error("Error loading user data!");
     } finally {
       setLoading(false);
     }
@@ -88,7 +92,7 @@ const UserPage = () => {
       setHasMore(newPosts.length > 0);
     } catch (err) {
       console.error("Error fetching user posts:", err);
-      toast.error("Lỗi khi tải bài viết!");
+      toast.error("Error loading posts!");
     } finally {
       setLoading(false);
     }
@@ -126,8 +130,9 @@ const UserPage = () => {
   // Hàm cập nhật ảnh đại diện hoặc ảnh bìa
   const handleUpdateImg = async (file, type) => {
     if (!file || !userId) return;
+
+    setImageUploading(true);
     try {
-      setLoading(true);
       const formData = new FormData();
       type === "avatar" ? formData.append('avatarImg', file) : formData.append('coverImg', file);
       const rs = await apiUpdateUserImgService(formData);
@@ -139,6 +144,7 @@ const UserPage = () => {
               ...prev,
               avatarImg: rs?.data?.avatarImg,
             }));
+            toast.success('Avatar updated successfully!');
             break;
           default:
             dispatch(authAction.updateCoverImg(rs?.data?.coverImg));
@@ -146,13 +152,18 @@ const UserPage = () => {
               ...prev,
               coverImg: rs?.data?.coverImg,
             }));
+            toast.success('Cover photo updated successfully!');
             break;
         }
+      } else {
+        throw new Error(rs?.message || 'Upload failed');
       }
     } catch (err) {
-      toast.error("Cập nhật ảnh thất bại!");
+      console.error('Upload error:', err);
+      toast.error("Failed to update image!");
+      throw err; // Re-throw để modal xử lý
     } finally {
-      setLoading(false);
+      setImageUploading(false);
     }
   };
 
@@ -167,11 +178,12 @@ const UserPage = () => {
           userProfile: res?.data?.userProfile,
         }));
         setOpenEditModal(false);
+        toast.success('Profile updated successfully!');
       } else {
-        toast.error(res?.message || 'Cập nhật thông tin thất bại!');
+        toast.error(res?.message || 'Failed to update profile!');
       }
     } catch (err) {
-      toast.error("Cập nhật thông tin thất bại!");
+      toast.error("Failed to update profile!");
     } finally {
       setLoading(false);
     }
@@ -188,6 +200,8 @@ const UserPage = () => {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+
+        {/* Action buttons */}
         <div className="absolute flex gap-3 top-6 right-6">
           {currentUserId !== userId && (
             <>
@@ -208,29 +222,21 @@ const UserPage = () => {
             <Share2 size={20} />
           </button>
         </div>
+
+        {/* Cover photo upload button */}
         {userId === currentUserId && (
           <div className="absolute z-30 flex items-center gap-2 top-6 left-6">
-            <input
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              ref={inputCoverRef}
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  console.log('Selected cover file:', e.target.files[0]);
-                  handleUpdateImg(e.target.files[0], "cover");
-                }
-              }}
-            />
             <button
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition rounded-lg bg-black/40 hover:bg-black/60"
-              onClick={() => inputCoverRef.current && inputCoverRef.current.click()}
+              onClick={() => setShowCoverModal(true)}
             >
               <Camera size={16} />
-              Đổi ảnh bìa
+              Change cover photo
             </button>
           </div>
         )}
+
+        {/* Profile info */}
         <div className="absolute max-w-lg p-6 text-white bottom-6 left-6 bg-black/40 backdrop-blur-md rounded-2xl">
           <div className="flex items-start gap-4">
             <div className="relative cursor-pointer group">
@@ -239,35 +245,24 @@ const UserPage = () => {
                 alt="Profile"
                 className="w-20 h-20 transition-all duration-300 border-4 rounded-full shadow-lg border-white/30 hover:shadow-xl group-hover:scale-105"
               />
-              <input
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                ref={inputAvatarRef}
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    handleUpdateImg(e.target.files[0], "avatar");
-                  }
-                }}
-              />
+
               {userId === currentUserId && (
                 <div
                   className="absolute inset-0 z-20 flex items-center justify-center transition-all duration-300 rounded-full opacity-0 cursor-pointer pointer-events-auto bg-black/40 group-hover:opacity-100"
-                  onClick={() => {
-                    console.log('Overlay clicked');
-                    inputAvatarRef.current && inputAvatarRef.current.click();
-                  }}
+                  onClick={() => setShowAvatarModal(true)}
                 >
                   <div className="p-2 transition-transform duration-200 transform scale-75 rounded-full bg-white/20 backdrop-blur-sm group-hover:scale-100">
                     <Camera className="w-4 h-4 text-white" />
                   </div>
                 </div>
               )}
+
               <div className="absolute flex items-center justify-center w-6 h-6 bg-white rounded-full shadow-md -bottom-1 -right-1">
                 <CheckCircle className="w-4 h-4 text-blue-500" />
               </div>
               <div className="absolute inset-0 transition-opacity duration-300 border-2 rounded-full opacity-0 border-white/50 group-hover:opacity-100 animate-pulse"></div>
             </div>
+
             <div className="flex-1">
               <h1 className="mb-1 text-2xl font-bold">{user?.userProfile?.firstName} {user?.userProfile?.lastName}</h1>
               {user?.userProfile?.location && (
@@ -282,12 +277,6 @@ const UserPage = () => {
             </div>
           </div>
         </div>
-        <EditProfileModal
-          open={openEditModal}
-          onClose={() => setOpenEditModal(false)}
-          initialValues={user || {}}
-          onSubmit={apiUpdateUserProfile}
-        />
       </div>
 
       {/* Navigation Bar */}
@@ -343,7 +332,7 @@ const UserPage = () => {
 
       {/* Main Content */}
       <div className="px-6 py-8 mx-auto max-w-7xl">
-        {userId === currentUserId && <PostCreateModal setCreateSuccess={setCreateSuccess} location="user"/>}
+        {userId === currentUserId && <PostCreateModal setCreateSuccess={setCreateSuccess} location="user" />}
 
         {loading && page === 0 && (
           <div className="flex justify-center py-8">
@@ -381,7 +370,7 @@ const UserPage = () => {
                           shareCount={post?.shareCount || 0}
                           tags={post?.tags || []}
                           isShare={post?.isShare}
-                          status={post?.status}
+                          privacy={post?.privacy}
                           comments={[]}
                           onShare={() => {
                             console.log('Share post:', post?.postId);
@@ -392,6 +381,7 @@ const UserPage = () => {
                           onComment={() => {
                             console.log('Comment on post:', post?.postId);
                           }}
+                          liked={post?.liked}
                         />
                       </div>
                     );
@@ -414,7 +404,7 @@ const UserPage = () => {
                       shareCount={post?.shareCount || 0}
                       tags={post?.tags || []}
                       isShare={post?.isShare}
-                      status={post?.status}
+                      privacy={post?.privacy}
                       comments={[]}
                       onShare={() => {
                         console.log('Share post:', post?.postId);
@@ -425,6 +415,7 @@ const UserPage = () => {
                       onComment={() => {
                         console.log('Comment on post:', post?.postId);
                       }}
+                      liked={post?.liked}
                     />
                   );
                 })
@@ -439,6 +430,34 @@ const UserPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <EditProfileModal
+        open={openEditModal}
+        onClose={() => setOpenEditModal(false)}
+        initialValues={user || {}}
+        onSubmit={apiUpdateUserProfile}
+      />
+
+      <ImageUploadModal
+        isOpen={showAvatarModal}
+        onClose={() => setShowAvatarModal(false)}
+        onSubmit={handleUpdateImg}
+        type="avatar"
+        title="Update Profile Picture"
+        currentImage={user?.avatarImg}
+        isUploading={imageUploading}
+      />
+
+      <ImageUploadModal
+        isOpen={showCoverModal}
+        onClose={() => setShowCoverModal(false)}
+        onSubmit={handleUpdateImg}
+        type="cover"
+        title="Update Cover Photo"
+        currentImage={user?.coverImg}
+        isUploading={imageUploading}
+      />
     </div>
   );
 };

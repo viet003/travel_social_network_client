@@ -1,5 +1,18 @@
 import axiosConfig from "../config/axiosConfig";
 
+export const apiFindAllUserByKeyword = async (keyword) => {
+    try {
+        const response = await axiosConfig({
+            method: 'GET',
+            url: `user/search?q=${encodeURIComponent(keyword)}`,
+        });
+        return response.data;
+    } catch (error) {
+        // Có thể trả về error.response.data hoặc throw error tuỳ ý
+        throw error.response ? error.response.data : error;
+    }
+}
+
 export const apiGetUserProfile = async (userId) => {
     try {
         const response = await axiosConfig({

@@ -8,5 +8,7 @@ export { default as LoginModal } from './modal/auth/LoginModal';
 export { default as SignUpModal } from './modal/auth/SignUpModal';
 export { default as PostModal } from './modal/post/PostModal';
 export { default as EditProfileModal } from './modal/user/EditProfileModal';
+export { default as ImageUploadModal} from './modal/user/ImageUploadModal'
+export { default as SearchResultsModal} from './modal/user/SearchResultsModal'
 export { default as PostCreateModal } from './modal/post/PostCreateModal';
 export { default as CommentCreateModal } from './modal/comment/CommentCreateModal'
